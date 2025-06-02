@@ -1,0 +1,32 @@
+Modificações
+    Arquivo: data/ReqList_ReqNet_ReqSim/2 ReqLists/2012 - EMR HHS.txt   
+        linha 93 antes: HIT 02.0	"The solution should support the use of the National Provider Identifier (NPI) in the EMR audit log to identify the individual provider, or, in situations when an NPI is not available for an individual, a single unique internal provider identifier is assigned."
+        linha 93 depois: 2.2.0	"The solution should support the use of the National Provider Identifier (NPI) in the EMR audit log to identify the individual provider, or, in situations when an NPI is not available for an individual, a single unique internal provider identifier is assigned."
+
+        linha 94 antes: HIT 03.1	The solution should support user ID/strong passwords.
+
+        linha 94 depois: 2.3.1	The solution should support user ID/strong passwords.
+
+        linha 95 antes: HIT 03.2	"The solution should demonstrate the ability to evolve the level of user authentication in the future, as industry standards require."
+
+        linha 95 depois: 2.3.2	"The solution should demonstrate the ability to evolve the level of user authentication in the future, as industry standards require."
+
+
+
+
+    Arquivo: data/ReqList_ReqNet_ReqSim/0.1 Raw Text/0000 - inventory.txt
+        linha 268 antes: 5.4. Adding inventory   assets
+        linha 268 depois: 5.4. Adding inventory assets
+
+        linha 275 antes: 5.5. Creating request to borrow an asset  or a reserve a location   
+        linha 275 depois: 5.5. Creating request to borrow an asset or a reserve a location   
+
+    Arquivo: data/ReqList_ReqNet_ReqSim/1 DocumentStructure - Metadata/0000 - inventory.txt
+        linha 8 antes: 5.4	Adding inventory   assets
+        linha 8 depois: 5.4	Adding inventory assets
+
+        linha 9 antes: 5.5	Creating request to borrow an asset  or a reserve a location
+        linha 9 depois: 5.5	Creating request to borrow an asset or a reserve a location
+
+        linha 10 antes: 5.6	Retuning assets   D
+        linha 10 depois: 5.6	Retuning assets
