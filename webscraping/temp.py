@@ -20,7 +20,8 @@ from typing import List
 class ResearchPaper:
     title: str
     date: Optional[str]
-    abstract: Optional[str]  
+    abstract: Optional[str]
+    publisher: Optional[str]    
     DOI: Optional[str]
     source_url: str
     authors: Optional[List[str]] = field(default_factory=list)
@@ -126,7 +127,7 @@ class IEEESources(WebDriverConfig):
         super().__init__()
         self.limit_showing_per_page=25        
 
-    def __research_datas(self):
+    def research_datas(self):
         xpath = "//div[@class='Dashboard-section Dashboard-section-gray text-base-md-lh']"
         div = self.driver.find_elements(By.XPATH, xpath)
         
@@ -148,21 +149,21 @@ class IEEESources(WebDriverConfig):
         
         return research
     
-    def __searches_on_page(self):
+    def searches_on_page(self):
         xpath = "//xpl-results-list/div[@class='List-results-items']"
         researches = self.driver_wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath)))
         researches_id = [x.get_attribute("id") for x in researches]
         
         return researches_id
     
-    def __next_page(self, num_pag):
+    def next_page(self, num_pag):
         xpath = f"//div[@class='pagination-bar hide-mobile text-base-md-lh']//button[@class='stats-Pagination_arrow_next_{num_pag}']"
         next_button = self.driver.find_element(By.XPATH, xpath)
         self.driver.execute_script("arguments[0].scrollIntoView(true);", next_button)
         self.driver_wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         next_button.click()
         
-    def __all_searches_ids(self, num_researches): 
+    def all_searches_ids(self, num_researches): # Para todos? talvez sim quero que sim 
         if isinstance(num_researches, list):
             logger.info("The argument type is a list, which is not ideal. The ideal type is an integer. The value will be converted to the number of elements in the list.")
             num_researches = len(num_researches)
@@ -170,19 +171,19 @@ class IEEESources(WebDriverConfig):
         num_pag_next = num_researches//self.limit_showing_per_page
         researches_id = []
         for i in range(num_pag_next):
-            researches_id.extend(self.__searches_on_page())
-            self.__next_page(i+2)
-        researches_id.extend(self.__searches_on_page())
+            researches_id.extend(self.searches_on_page())
+            self.next_page(i+2)
+        researches_id.extend(self.searches_on_page())
         return researches_id
 
-    def __paper_title(self):
+    def paper_title(self):
         xpath = "//h1[contains(@class, 'document-title')]//span"
         span_title = self.driver_wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
         
         title = span_title.text
         return title
     
-    def __paper_authors(self): 
+    def paper_authors(self): 
         xpath = "//div[contains(@class, 'authors-container')]//span[contains(@class, 'authors-info')]"
         span_authors = self.driver.find_elements(By.XPATH, xpath)
         
@@ -195,7 +196,7 @@ class IEEESources(WebDriverConfig):
         
         return authors
     
-    def __paper_abstract(self):        
+    def paper_abstract(self):        
         xpath = "//div[@class='u-mb-1']"
         span_abstract = self.driver.find_element(By.XPATH, xpath)
         full_text = span_abstract.text
@@ -203,7 +204,7 @@ class IEEESources(WebDriverConfig):
         
         return abstract_text
     
-    def __paper_date(self): 
+    def paper_date(self): 
         xpath = "//div[contains(@class, 'u-pb-1 doc-abstract-')]"
         
         div_date = self.driver.find_element(By.XPATH, xpath)
@@ -216,14 +217,21 @@ class IEEESources(WebDriverConfig):
             logger.debug(date_text)
         return date
         
-    def __paper_doi(self):
+    def paper_doi(self):
         xpath = "//div[@class='u-pb-1 stats-document-abstract-doi']"
         div_doi = self.driver.find_element(By.XPATH, xpath)
         doi = div_doi.text.replace("DOI: ", "")
 
         return doi
     
-    def __paper_keywords(self):
+    def paper_publisher(self):
+        xpath = "//div[@class='u-pb-1 doc-abstract-publisher']//button//span"
+        span_publisher = self.driver.find_elements(By.XPATH, xpath)
+        publisher = span_publisher[0].text
+        
+        return publisher
+    
+    def paper_keywords(self):
         xpath = "//button[@id='keywords']"
         keywords_button = self.driver.find_element(By.XPATH, xpath)
         self.driver.execute_script("arguments[0].scrollIntoView(true);", keywords_button)
@@ -243,50 +251,58 @@ class IEEESources(WebDriverConfig):
         
         return all_keywords
                 
-    def __research_paper(self, id): 
+    def research_paper(self, id): # Para todos? talvez sim quero que sim
         source_url = f"https://ieeexplore.ieee.org/document/{id}"
         self.load_url(source_url)   
         
         incomplete = False 
         try:
-            keywords = self.__paper_keywords()
+            keywords = self.paper_keywords()
         except Exception as e:
             logger.warning(f"[{id}] Failed to collect keywords: {e}")
             keywords = None
             incomplete = True
             
         try:
-            date = self.__paper_date()
+            date = self.paper_date()
         except Exception as e:
             logger.warning(f"[{id}] Failed to collect date: {e}")
             date = None
             incomplete = True
 
         try:
-            abstract = self.__paper_abstract()
+            abstract = self.paper_abstract()
         except Exception as e:
             logger.warning(f"[{id}] Failed to collect abstract: {e}")
             abstract = None
             incomplete = True
 
         try:
-            doi = self.__paper_doi()
+            publisher = self.paper_publisher()
+        except Exception as e:
+            logger.warning(f"[{id}] Failed to collect publisher: {e}")
+            publisher = None
+            incomplete = True
+
+        try:
+            doi = self.paper_doi()
         except Exception as e:
             logger.warning(f"[{id}] Failed to collect DOI: {e}")
             doi = None
             incomplete = True
 
         try:
-            authors = self.__paper_authors()
+            authors = self.paper_authors()
         except Exception as e:
             logger.warning(f"[{id}] Failed to collect authors: {e}")
             authors = None
             incomplete = True
 
         research_paper = ResearchPaper(
-            title=self.__paper_title(),
+            title=self.paper_title(),
             date=date,
             abstract=abstract,
+            publisher=publisher,
             DOI=doi,
             source_url=source_url,
             authors=authors,
@@ -294,11 +310,11 @@ class IEEESources(WebDriverConfig):
         )
         return research_paper, incomplete
 
-    def __fetch_paper(self, id, failed_urls, incomplete_papers): 
+    def __fetch_paper(self, id, failed_urls, incomplete_papers): # Para todos? talvez sim quero que sim
         url = f"https://ieeexplore.ieee.org/document/{id}"
         try:
             with IEEESources() as temp_ieee:
-                paper, incomplete = temp_ieee.__research_paper(id)
+                paper, incomplete = temp_ieee.research_paper(id)
                 if incomplete:
                     incomplete_papers[id] = paper
                     logger.warning(f"Paper de id={id} processado, porém incompleto.  URL: {url}")
@@ -309,7 +325,7 @@ class IEEESources(WebDriverConfig):
             logger.error(f"Error processing role ID={id}| URL: {url} | Erro: {e}", exc_info=True)
             return None
             
-    def __max_workers(self, num_elements): 
+    def __max_workers(self, num_elements): # Para todos? talvez sim quero que sim
         max_workers_by_cpu = os.cpu_count() * 2
         if num_elements > max_workers_by_cpu:
             max_workers = max_workers_by_cpu
@@ -330,11 +346,11 @@ class IEEESources(WebDriverConfig):
         if max_workers < max_workers_by_cpu:
             return max_workers
 
-    def get_all_researches(self, url, max_workers=None): 
+    def get_all_researches(self, url, max_workers=None): # Para todos? talvez sim quero que sim
         self.load_url(url, wait_xpath="//div[@class='personal-login-header']")
-        research_datas = self.__research_datas() #ok
+        research_datas = self.research_datas() #ok
         num_researches = research_datas["num_results"] #ok
-        papers_ids = self.__all_searches_ids(num_researches) #ok
+        papers_ids = self.all_searches_ids(num_researches) #ok
         
         if max_workers is None:
             max_workers = self.__max_workers(num_researches)
@@ -370,95 +386,10 @@ class IEEESources(WebDriverConfig):
                 
         return research
     
-class ACMSources(WebDriverConfig):
-    def  __init__(self):
-        super().__init__()
-        self.limit_showing_per_page=20     
-
-    def __research_datas(self):
-        xpath = "//div[@class='search__acm-results']//span[@class='suffix__info']"
-        span_text = self.driver.find_element(By.XPATH, xpath).text
-        index_results_for = span_text.find("Results for: ")
-        index_date = span_text.find("AND [E-Publication Date: ")
-        num_results =  int(span_text[:index_results_for])
-        keywords = span_text[index_results_for+13:index_date]
-        years = span_text[index_date+24:-1]
-        
-        research = {
-            "num_results": num_results,
-            "keywords": keywords,
-            "years": years
-        }
-        
-        return research
-    
-    def searches_on_page(self):
-        # <div data-exp-type="" data-query-id="38/9234357471" class="search-result doSearch">
-        # <ul class="search-result__xsl-body  items-results rlist--inline ">
-        xpath = "//div[@class='search-result doSearch']//ul[@class='search-result__xsl-body  items-results rlist--inline ']/li"
-        ul = self.driver_wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath)))
-        
-        count = 0
-        for li in ul:
-            li_text = li.text
-            ids = [] 
-            if li_text != "":
-                logger.debug("="*80)
-                logger.debug(count)
-                count+=1    
-                text_split = li_text.split("\n")
-                for text in text_split:
-                    if "https://doi.org/" in text:
-                        index = text.find("https://doi.org/")
-                        text = text[index+16:]
-                        logger.debug(text)
-                        logger.debug(text)
-                
-            
-        researchs_url = []
-    
-    def __next_page(self, num_pag):
-        pass
-        
-    def __all_searches_ids(self, num_researches): 
-        pass
-
-    def __paper_title(self):
-        pass
-    
-    def __paper_authors(self): 
-        pass
-    
-    def __paper_abstract(self):        
-        pass
-    
-    def __paper_date(self): 
-        pass
-        
-    def __paper_doi(self):
-        pass
-    
-    def __paper_keywords(self):
-        pass
-                
-    def __research_paper(self, id): 
-        pass
-
-    def __fetch_paper(self, id, failed_urls, incomplete_papers): 
-        pass
-            
-    def __max_workers(self, num_elements): 
-        pass
-
-    def get_all_researches(self, url, max_workers=None): 
-        pass
-        
 if __name__ == "__main__":
     import time
     try: 
         start_time = time.time()
-        # IEEE
-        ##############################################################################
         #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&highlight=true&returnType=SEARCH&matchPubs=true&pageNumber=1&ranges=2020_2025_Year&returnFacets=ALL"
         #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:gile%20requirements)%20AND%20(%22Full%20Text%20.AND.%20Metadata%22:usage%20scenario)%20OR%20(%22Full%20Text%20.AND.%20Metadata%22:user%20stories)%20AND%20(%22Abstract%22:language%20models)%20AND%20(%22All%20Metadata%22:elicitation)&ranges=2020_2025_Year"
         #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&ranges=2020_2025_Year"
@@ -472,20 +403,10 @@ if __name__ == "__main__":
         #    logger.info(f"Tipo de conteúdo: {research.content_type}")
         #    logger.info(f"URL: {research.url}")
         #    logger.info(f"Número de artigos encontrados: {len(research.papers)}")
-        #############################################################################
-        
-        url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=all&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=agile&AfterMonth=5&AfterYear=2020&BeforeMonth=5&BeforeYear=2025"
-        
-        with ACMSources() as acm:
-            acm.load_url(url)
-            acm.searches_on_page()
-        
-        #https://dl.acm.org/doi/ 
-        #10.1007/978-3-031-78386-9_20
-        #10.1007/978-3-031-78386-9_20
+    
         elapsed_time = time.time() - start_time
-        logger.debug(f"Tempo total de execução: {elapsed_time:.2f} segundos")
-        
+        #logger.debug(f"Tempo total de execução: {elapsed_time:.2f} segundos")
+        #
         #with open(os.path.join("webscraping", "data","ieee_research_data_3.pkl"), "wb") as file:
         #    pickle.dump(research, file)
     
