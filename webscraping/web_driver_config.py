@@ -84,6 +84,11 @@ class WebDriverConfig:
                 logger.error(f"Erro ao finalizar o driver: {e}")
             finally:
                 self._driver = None
+
+    def restart_driver(self):
+        self.quit_driver()
+        self._driver = None
+        self._driver_wait = WebDriverWait(self.driver, self.wait_time)
                     
     @property
     def chrome_options(self):
@@ -161,10 +166,11 @@ class IEEESources(WebDriverConfig):
         self.driver.execute_script("arguments[0].scrollIntoView(true);", next_button)
         self.driver_wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         next_button.click()
+        time.sleep(1.5)
         
     def __all_searches_ids(self, num_researches): 
         if isinstance(num_researches, list):
-            logger.info("The argument type is a list, which is not ideal. The ideal type is an integer. The value will be converted to the number of elements in the list.")
+            logger.warning("The argument type is a list, which is not ideal. The ideal type is an integer. The value will be converted to the number of elements in the list.")
             num_researches = len(num_researches)
             
         num_pag_next = num_researches//self.limit_showing_per_page
@@ -178,8 +184,8 @@ class IEEESources(WebDriverConfig):
     def __paper_title(self):
         xpath = "//h1[contains(@class, 'document-title')]//span"
         span_title = self.driver_wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-        
         title = span_title.text
+        
         return title
     
     def __paper_authors(self): 
@@ -292,6 +298,7 @@ class IEEESources(WebDriverConfig):
             authors=authors,
             keywords=keywords
         )
+        self.quit_driver()
         return research_paper, incomplete
 
     def __fetch_paper(self, id, failed_urls, incomplete_papers): 
@@ -332,9 +339,9 @@ class IEEESources(WebDriverConfig):
 
     def get_all_researches(self, url, max_workers=None): 
         self.load_url(url, wait_xpath="//div[@class='personal-login-header']")
-        research_datas = self.__research_datas() #ok
-        num_researches = research_datas["num_results"] #ok
-        papers_ids = self.__all_searches_ids(num_researches) #ok
+        research_datas = self.__research_datas() 
+        num_researches = research_datas["num_results"] 
+        papers_ids = self.__all_searches_ids(num_researches) 
         
         if max_workers is None:
             max_workers = self.__max_workers(num_researches)
@@ -379,10 +386,12 @@ class ACMSources(WebDriverConfig):
         xpath = "//div[@class='search__acm-results']//span[@class='suffix__info']"
         span_text = self.driver.find_element(By.XPATH, xpath).text
         index_results_for = span_text.find("Results for: ")
+        end_index_result = index_results_for + len("Results for: ")
         index_date = span_text.find("AND [E-Publication Date: ")
+        end_index_date = index_date + len("AND [E-Publication Date: ")
         num_results =  int(span_text[:index_results_for])
-        keywords = span_text[index_results_for+13:index_date]
-        years = span_text[index_date+24:-1]
+        keywords = span_text[end_index_result:index_date]
+        years = span_text[end_index_date:-1]
         
         research = {
             "num_results": num_results,
@@ -392,67 +401,236 @@ class ACMSources(WebDriverConfig):
         
         return research
     
-    def searches_on_page(self):
-        # <div data-exp-type="" data-query-id="38/9234357471" class="search-result doSearch">
-        # <ul class="search-result__xsl-body  items-results rlist--inline ">
-        xpath = "//div[@class='search-result doSearch']//ul[@class='search-result__xsl-body  items-results rlist--inline ']/li"
+    def __searches_on_page(self):
+        ul_class = "search-result__xsl-body  items-results rlist--inline "
+        xpath = f"//div[@class='search-result doSearch']//ul[@class='{ul_class}']/li"
         ul = self.driver_wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath)))
-        
-        count = 0
+        if not ul:
+            ul_class = "search-result__xsl-body items-results rlist--inline"
+            xpath = f"//div[@class='search-result doSearch']//ul[@class='{ul_class}']/li"
+            ul = self.driver_wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath)))
+            
+        ids = []
         for li in ul:
-            li_text = li.text
-            ids = [] 
-            if li_text != "":
-                logger.debug("="*80)
-                logger.debug(count)
-                count+=1    
+            li_text = li.text 
+            if li_text != "":  
                 text_split = li_text.split("\n")
                 for text in text_split:
                     if "https://doi.org/" in text:
                         index = text.find("https://doi.org/")
-                        text = text[index+16:]
-                        logger.debug(text)
-                        logger.debug(text)
-                
-            
-        researchs_url = []
-    
-    def __next_page(self, num_pag):
-        pass
-        
-    def __all_searches_ids(self, num_researches): 
-        pass
+                        end_index = index + len("https://doi.org/")
+                        text = text[end_index:]
+                        ids.append(text)
 
+        return ids
+    
+    def __allow_all_cookies(self):
+        xpath = "//div[@id='CybotCookiebotDialogBodyButtonsWrapper']//button[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']"
+        allow = self.driver_wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
+        allow.click()
+        logger.debug("Cookies autorizados")
+
+    def __next_page(self):
+        self.__allow_all_cookies()
+        xpath = "//div[@class='search-result doSearch']//nav[@class='pagination']//span//a[@class='pagination__btn--next']"
+        next_button = self.driver.find_element(By.XPATH, xpath)
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", next_button)
+        next_button = self.driver_wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
+        url = next_button.get_attribute("href")
+        logger.debug(f"Próxima página: {url}")
+        self.restart_driver()
+        time.sleep(1)
+        self.load_url(url)
+        #next_button.click()
+        time.sleep(1)
+
+    def __all_searches_ids(self, num_researches): 
+        if isinstance(num_researches, list):
+            logger.warning("The argument type is a list, which is not ideal. The ideal type is an integer. The value will be converted to the number of elements in the list.")
+            num_researches = len(num_researches)
+        
+        num_pag_next = num_researches//self.limit_showing_per_page
+        researches_id = []
+        for i in range(num_pag_next):
+            researches_id.extend(self.__searches_on_page())
+            self.__next_page()
+
+        researches_id.extend(self.__searches_on_page())
+
+        logger.debug(f"ids encontrados: {len(researches_id)}")
+        logger.debug(f"ids encontrados na página: {researches_id}")
+        return researches_id
+    
     def __paper_title(self):
-        pass
+        xpath = "//div[@class='core-container']/h1"
+        h1_title = self.driver_wait.until(EC.element_located_to_be_selected((By.XPATH, xpath)))
+        title = h1_title.text
+
+        return title
     
     def __paper_authors(self): 
-        pass
+        xpath = "//div[@class='contributors']//span[@class='authors']//span[@property='author']"
+        span_authors = self.driver.find_elements(By.XPATH, xpath)
+        authors = [author for author in span_authors]
+
+        return authors
     
     def __paper_abstract(self):        
-        pass
-    
+        xpath = "//div[@id='abstracts']//section[@id='abstract']//div"
+        div_abstract = self.driver.find_element(By.XPATH, xpath)
+        abstract = div_abstract.text
+        
+        return abstract
+
     def __paper_date(self): 
-        pass
+        xpath = "//div[@class='core-published']//span[@class='core-date-published']"
+        span_date = self.driver.find_element(By.XPATH, xpath)
+        date = span_date.text
+        
+        return date
         
     def __paper_doi(self):
-        pass
+        self.load_url("https://dl.acm.org/doi/10.1145/3691620.3695591")
+        self.__allow_all_cookies()
     
     def __paper_keywords(self):
-        pass
+        section_terms = self.driver.find_element(By.ID, "sec-terms")
+        self.driver.execute_script("arguments[0].scrollIntoView(true)", section_terms)
+
+        xpath = "//section[@id='sec-terms']//div[@class='citation article__section article__index-terms']//ol[@class='rlist organizational-chart']/li"
+        li_terms = self.driver_wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath)))
+        
+        keywords = []
+        for li in li_terms:
+            terms = li.text
+            keywords.append(terms)
+        
+        return keywords
                 
     def __research_paper(self, id): 
-        pass
+        source_url = f"https://dl.acm.org/doi/{id}"
+        self.restart_driver
+        self.load_url(source_url)
+        self.__allow_all_cookies()
+        logger.debug("="*90)
+
+        incomplete = False
+        try:
+            keywords = self.__paper_keywords()
+        except Exception as e:
+            logger.warning(f"[{id}] Failed to collect keywords: {e}")
+            keywords = None
+            incomplete = True
+
+        try: 
+            date = self.__paper_date()
+        except Exception as e:
+            logger.warning(f"[{id}] Failed to collect date: {e}")
+            date = None
+            incomplete = True
+        
+        try:
+            abstract = self.__paper_abstract()
+        except Exception as e:
+            logger.warning(f"[{id}] Failed to collect abstract: {e}")
+            abstract = None
+            incomplete = True
+        
+        try:
+            authors = self.__paper_authors()
+        except Exception as e:  
+            logger.warning(f"[{id}] Failed to collect authors: {e}")
+            authors = None
+            incomplete = True
+        
+        research_paper = ResearchPaper(
+            title=self.__paper_title(),
+            date=date,
+            abstract=abstract,
+            DOI=id,
+            source_url=source_url,
+            authors=authors,
+            keywords=keywords
+        )
+        self.quit_driver()
+        return research_paper, incomplete
 
     def __fetch_paper(self, id, failed_urls, incomplete_papers): 
-        pass
+        url = f"https://dl.acm.org/doi/{id}"
+        try:    
+            with ACMSources() as temp_acm:
+                paper, incomplete = temp_acm.__research_paper(id)
+                if incomplete:
+                    incomplete_papers[id] = paper
+                    logger.warning(f"Paper de id={id} processado, porém incompleto.  URL: {url}")
+                logger.debug(f"Paper de id={id} processado!")
+                return paper
+        except Exception as e:
+            failed_urls.append(url)
+            logger.error(f"Error processing role ID={id}| URL: {url} | Erro: {e}", exc_info=True)
+            return None
             
     def __max_workers(self, num_elements): 
-        pass
+        max_workers_by_cpu = os.cpu_count() * 2
+        if num_elements > max_workers_by_cpu:
+            max_workers = max_workers_by_cpu
+            return max_workers
+        
+        odd_numbers = [2,3,5,7]
+        lower_value = None
+        max_workers = None
+        for odd in odd_numbers:
+            lower_temp = num_elements//odd
+            if lower_value is None:
+                lower_value = lower_temp
+                max_workers = odd
+            elif lower_temp < lower_value:
+                lower_value = lower_temp
+                max_workers = odd
+        
+        if max_workers < max_workers_by_cpu:
+            return max_workers
 
     def get_all_researches(self, url, max_workers=None): 
-        pass
+        self.load_url(url, wait_xpath="//div[@class='pull-right search-showing-results']")
+        research_datas = self.__research_datas()
+        num_researches = research_datas["num_results"]
+        papers_ids = self.__all_searches_ids(num_researches)
+
+        if max_workers is None:
+            max_workers = self.__max_workers(num_researches)
+
+        papers = {}
+        failed_urls = []
+        incomplete_papers = {}
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
+            future_to_id = {ex.submit(self.__fetch_paper, id, failed_urls, incomplete_papers): id for id in papers_ids}
+            for future in as_completed(future_to_id):
+                paper_id = future_to_id[future]
+                paper = future.result()
+                if paper:
+                    papers[paper_id] = paper
+
+        research = Research(
+            num_results = research_datas["num_results"],
+            keywords = research_datas["keywords"],
+            years = research_datas["years"],
+            publisher = "ACM",
+            url = url,
+            content_type = ["Article", "Conference Paper", "Journal Article"],
+            papers_urls = papers_ids,
+            failed_urls = failed_urls,
+            papers = papers,
+            incomplete_papers = incomplete_papers
+        )
+
+        if failed_urls:
+            logger.warning(f"Total URLs with error: {len(failed_urls)}")
+            for fail in failed_urls:
+                logger.warning(f"Failed to parse: {fail}")
         
+        return research
+    
 if __name__ == "__main__":
     import time
     try: 
@@ -475,14 +653,17 @@ if __name__ == "__main__":
         #############################################################################
         
         url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=all&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=agile&AfterMonth=5&AfterYear=2020&BeforeMonth=5&BeforeYear=2025"
-        
+        url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=Abstract&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=story+user&AfterMonth=12&AfterYear=2023&BeforeMonth=1&BeforeYear=2025"
         with ACMSources() as acm:
-            acm.load_url(url)
-            acm.searches_on_page()
+            research = acm.get_all_researches(url, 4)
+            logger.info(f"Total de resultados: {research.num_results}")
+            logger.info(f"Palavras-chave: {research.keywords}")
+            logger.info(f"Anos: {research.years}")
+            logger.info(f"Publisher: {research.publisher}")
+            logger.info(f"Tipo de conteúdo: {research.content_type}")
+            logger.info(f"URL: {research.url}")
+            logger.info(f"Número de artigos encontrados: {len(research.papers)}")
         
-        #https://dl.acm.org/doi/ 
-        #10.1007/978-3-031-78386-9_20
-        #10.1007/978-3-031-78386-9_20
         elapsed_time = time.time() - start_time
         logger.debug(f"Tempo total de execução: {elapsed_time:.2f} segundos")
         
