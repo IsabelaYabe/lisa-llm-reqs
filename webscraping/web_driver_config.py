@@ -256,36 +256,36 @@ class IEEESources(WebDriverConfig):
         incomplete = False 
         try:
             keywords = self.__paper_keywords()
-        except Exception as e:
-            logger.warning(f"[{id}] Failed to collect keywords: {e}")
+        except:
+            logger.warning(f"[{id}] Failed to collect keywords.")
             keywords = None
             incomplete = True
             
         try:
             date = self.__paper_date()
-        except Exception as e:
-            logger.warning(f"[{id}] Failed to collect date: {e}")
+        except:
+            logger.warning(f"[{id}] Failed to collect date.")
             date = None
             incomplete = True
 
         try:
             abstract = self.__paper_abstract()
-        except Exception as e:
-            logger.warning(f"[{id}] Failed to collect abstract: {e}")
+        except:
+            logger.warning(f"[{id}] Failed to collect abstract.")
             abstract = None
             incomplete = True
 
         try:
             doi = self.__paper_doi()
-        except Exception as e:
-            logger.warning(f"[{id}] Failed to collect DOI: {e}")
+        except:
+            logger.warning(f"[{id}] Failed to collect DOI.")
             doi = None
             incomplete = True
 
         try:
             authors = self.__paper_authors()
-        except Exception as e:
-            logger.warning(f"[{id}] Failed to collect authors: {e}")
+        except:
+            logger.warning(f"[{id}] Failed to collect authors.")
             authors = None
             incomplete = True
 
@@ -463,15 +463,20 @@ class ACMSources(WebDriverConfig):
     
     def __paper_title(self):
         xpath = "//div[@class='core-container']/h1"
-        h1_title = self.driver_wait.until(EC.element_located_to_be_selected((By.XPATH, xpath)))
+        h1_title = self.driver_wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath)))
+        
+        if len(h1_title) != 1:
+            raise ValueError(f"Expected exactly 1 matching div, but found {len(h1_title)}.")
+        h1_title = h1_title[0]
+        
         title = h1_title.text
-
+        logger.debug(f"Title: {title}")
         return title
     
     def __paper_authors(self): 
         xpath = "//div[@class='contributors']//span[@class='authors']//span[@property='author']"
         span_authors = self.driver.find_elements(By.XPATH, xpath)
-        authors = [author for author in span_authors]
+        authors = [author.text for author in span_authors]
 
         return authors
     
@@ -502,8 +507,9 @@ class ACMSources(WebDriverConfig):
         
         keywords = []
         for li in li_terms:
-            terms = li.text
-            keywords.append(terms)
+            terms = li.text.split("\n")
+            for term in terms:
+                keywords.append(term)
         
         return keywords
                 
@@ -516,30 +522,34 @@ class ACMSources(WebDriverConfig):
 
         incomplete = False
         try:
-            keywords = self.__paper_keywords()
-        except Exception as e:
-            logger.warning(f"[{id}] Failed to collect keywords: {e}")
+            keywords = self.__paper_keywords() 
+            logger.debug(f"Keywords: {keywords}") # OK
+        except:
+            logger.warning(f"[{id}] Failed to collect keywords.")
             keywords = None
             incomplete = True
 
         try: 
             date = self.__paper_date()
-        except Exception as e:
-            logger.warning(f"[{id}] Failed to collect date: {e}")
+            logger.debug(f"Date: {date}") # OK
+        except:
+            logger.warning(f"[{id}] Failed to collect date.")
             date = None
             incomplete = True
         
         try:
             abstract = self.__paper_abstract()
-        except Exception as e:
-            logger.warning(f"[{id}] Failed to collect abstract: {e}")
+            logger.debug(f"Abstract: {abstract}") # OK
+        except:
+            logger.warning(f"[{id}] Failed to collect abstract.")
             abstract = None
             incomplete = True
         
         try:
             authors = self.__paper_authors()
-        except Exception as e:  
-            logger.warning(f"[{id}] Failed to collect authors: {e}")
+            logger.debug(f"Authors: {authors}") # OK
+        except:  
+            logger.warning(f"[{id}] Failed to collect authors.")
             authors = None
             incomplete = True
         
@@ -640,6 +650,7 @@ if __name__ == "__main__":
         #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&highlight=true&returnType=SEARCH&matchPubs=true&pageNumber=1&ranges=2020_2025_Year&returnFacets=ALL"
         #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:gile%20requirements)%20AND%20(%22Full%20Text%20.AND.%20Metadata%22:usage%20scenario)%20OR%20(%22Full%20Text%20.AND.%20Metadata%22:user%20stories)%20AND%20(%22Abstract%22:language%20models)%20AND%20(%22All%20Metadata%22:elicitation)&ranges=2020_2025_Year"
         #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&ranges=2020_2025_Year"
+        url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22Abstract%22:language%20model)%20AND%20(%22Abstract%22:requirements%20generation)&ranges=2022_2025_Year"
         
         #with IEEESources() as ieee:
         #    research = ieee.get_all_researches(url)
@@ -652,10 +663,10 @@ if __name__ == "__main__":
         #    logger.info(f"Número de artigos encontrados: {len(research.papers)}")
         #############################################################################
         
-        url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=all&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=agile&AfterMonth=5&AfterYear=2020&BeforeMonth=5&BeforeYear=2025"
-        url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=Abstract&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=story+user&AfterMonth=12&AfterYear=2023&BeforeMonth=1&BeforeYear=2025"
+        #url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=all&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=agile&AfterMonth=5&AfterYear=2020&BeforeMonth=5&BeforeYear=2025"
+        url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=requirements+generation&field4=Fulltext&text4=user+stories&field5=Fulltext&text5=user+story&field6=Fulltext&text6=agile&AfterMonth=1&AfterYear=2022&BeforeMonth=5&BeforeYear=2025"
         with ACMSources() as acm:
-            research = acm.get_all_researches(url, 4)
+            research = acm.get_all_researches(url)
             logger.info(f"Total de resultados: {research.num_results}")
             logger.info(f"Palavras-chave: {research.keywords}")
             logger.info(f"Anos: {research.years}")
@@ -667,8 +678,8 @@ if __name__ == "__main__":
         elapsed_time = time.time() - start_time
         logger.debug(f"Tempo total de execução: {elapsed_time:.2f} segundos")
         
-        #with open(os.path.join("webscraping", "data","ieee_research_data_3.pkl"), "wb") as file:
-        #    pickle.dump(research, file)
+        with open(os.path.join("webscraping", "data","acm_research_data_1.pkl"), "wb") as file:
+            pickle.dump(research, file)
     
     except Exception as e:
         logger.error(f"Erro ao executar scraping: {e}", exc_info=True)
