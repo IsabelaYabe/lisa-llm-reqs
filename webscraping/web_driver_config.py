@@ -245,7 +245,8 @@ class IEEESources(WebDriverConfig):
             ul_text = ul.text.strip()
             if ul_text != "":
                 keywords = ul_text.split("\n,\n") 
-                all_keywords.append(keywords)
+                all_keywords += keywords
+        all_keywords = list(set(all_keywords))
         
         return all_keywords
                 
@@ -309,7 +310,7 @@ class IEEESources(WebDriverConfig):
                 if incomplete:
                     incomplete_papers[id] = paper
                     logger.warning(f"Paper de id={id} processado, porém incompleto.  URL: {url}")
-                logger.debug(f"Paper de id={id} processado!")
+                #logger.debug(f"Paper de id={id} processado!")
                 return paper
         except Exception as e:
             failed_urls.append(url)
@@ -428,7 +429,6 @@ class ACMSources(WebDriverConfig):
         xpath = "//div[@id='CybotCookiebotDialogBodyButtonsWrapper']//button[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']"
         allow = self.driver_wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         allow.click()
-        logger.debug("Cookies autorizados")
 
     def __next_page(self):
         self.__allow_all_cookies()
@@ -437,7 +437,6 @@ class ACMSources(WebDriverConfig):
         self.driver.execute_script("arguments[0].scrollIntoView(true);", next_button)
         next_button = self.driver_wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         url = next_button.get_attribute("href")
-        logger.debug(f"Próxima página: {url}")
         self.restart_driver()
         time.sleep(1)
         self.load_url(url)
@@ -457,8 +456,6 @@ class ACMSources(WebDriverConfig):
 
         researches_id.extend(self.__searches_on_page())
 
-        logger.debug(f"ids encontrados: {len(researches_id)}")
-        logger.debug(f"ids encontrados na página: {researches_id}")
         return researches_id
     
     def __paper_title(self):
@@ -470,7 +467,6 @@ class ACMSources(WebDriverConfig):
         h1_title = h1_title[0]
         
         title = h1_title.text
-        logger.debug(f"Title: {title}")
         return title
     
     def __paper_authors(self): 
@@ -510,6 +506,7 @@ class ACMSources(WebDriverConfig):
             terms = li.text.split("\n")
             for term in terms:
                 keywords.append(term)
+        keywords = keywords[1:]
         
         return keywords
                 
@@ -518,12 +515,11 @@ class ACMSources(WebDriverConfig):
         self.restart_driver
         self.load_url(source_url)
         self.__allow_all_cookies()
-        logger.debug("="*90)
 
         incomplete = False
         try:
             keywords = self.__paper_keywords() 
-            logger.debug(f"Keywords: {keywords}") # OK
+            logger.debug(f"Keywords collected: {keywords}")
         except:
             logger.warning(f"[{id}] Failed to collect keywords.")
             keywords = None
@@ -531,7 +527,6 @@ class ACMSources(WebDriverConfig):
 
         try: 
             date = self.__paper_date()
-            logger.debug(f"Date: {date}") # OK
         except:
             logger.warning(f"[{id}] Failed to collect date.")
             date = None
@@ -539,7 +534,6 @@ class ACMSources(WebDriverConfig):
         
         try:
             abstract = self.__paper_abstract()
-            logger.debug(f"Abstract: {abstract}") # OK
         except:
             logger.warning(f"[{id}] Failed to collect abstract.")
             abstract = None
@@ -547,7 +541,6 @@ class ACMSources(WebDriverConfig):
         
         try:
             authors = self.__paper_authors()
-            logger.debug(f"Authors: {authors}") # OK
         except:  
             logger.warning(f"[{id}] Failed to collect authors.")
             authors = None
@@ -573,7 +566,7 @@ class ACMSources(WebDriverConfig):
                 if incomplete:
                     incomplete_papers[id] = paper
                     logger.warning(f"Paper de id={id} processado, porém incompleto.  URL: {url}")
-                logger.debug(f"Paper de id={id} processado!")
+                #logger.debug(f"Paper de id={id} processado!")
                 return paper
         except Exception as e:
             failed_urls.append(url)
@@ -643,43 +636,66 @@ class ACMSources(WebDriverConfig):
     
 if __name__ == "__main__":
     import time
-    try: 
-        start_time = time.time()
-        # IEEE
-        ##############################################################################
-        #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&highlight=true&returnType=SEARCH&matchPubs=true&pageNumber=1&ranges=2020_2025_Year&returnFacets=ALL"
-        #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:gile%20requirements)%20AND%20(%22Full%20Text%20.AND.%20Metadata%22:usage%20scenario)%20OR%20(%22Full%20Text%20.AND.%20Metadata%22:user%20stories)%20AND%20(%22Abstract%22:language%20models)%20AND%20(%22All%20Metadata%22:elicitation)&ranges=2020_2025_Year"
-        #url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&ranges=2020_2025_Year"
-        url = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22Abstract%22:language%20model)%20AND%20(%22Abstract%22:requirements%20generation)&ranges=2022_2025_Year"
-        
-        #with IEEESources() as ieee:
-        #    research = ieee.get_all_researches(url)
-        #    logger.info(f"Total de resultados: {research.num_results}")
-        #    logger.info(f"Palavras-chave: {research.keywords}")
-        #    logger.info(f"Anos: {research.years}")
-        #    logger.info(f"Publisher: {research.publisher}")
-        #    logger.info(f"Tipo de conteúdo: {research.content_type}")
-        #    logger.info(f"URL: {research.url}")
-        #    logger.info(f"Número de artigos encontrados: {len(research.papers)}")
-        #############################################################################
-        
-        #url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=all&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=agile&AfterMonth=5&AfterYear=2020&BeforeMonth=5&BeforeYear=2025"
-        url = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=requirements+generation&field4=Fulltext&text4=user+stories&field5=Fulltext&text5=user+story&field6=Fulltext&text6=agile&AfterMonth=1&AfterYear=2022&BeforeMonth=5&BeforeYear=2025"
-        with ACMSources() as acm:
-            research = acm.get_all_researches(url)
-            logger.info(f"Total de resultados: {research.num_results}")
-            logger.info(f"Palavras-chave: {research.keywords}")
-            logger.info(f"Anos: {research.years}")
-            logger.info(f"Publisher: {research.publisher}")
-            logger.info(f"Tipo de conteúdo: {research.content_type}")
-            logger.info(f"URL: {research.url}")
-            logger.info(f"Número de artigos encontrados: {len(research.papers)}")
-        
-        elapsed_time = time.time() - start_time
-        logger.debug(f"Tempo total de execução: {elapsed_time:.2f} segundos")
-        
-        with open(os.path.join("webscraping", "data","acm_research_data_1.pkl"), "wb") as file:
-            pickle.dump(research, file)
+
+    start_time = time.time()
     
-    except Exception as e:
-        logger.error(f"Erro ao executar scraping: {e}", exc_info=True)
+    url_ieee_1 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&highlight=true&returnType=SEARCH&matchPubs=true&pageNumber=1&ranges=2020_2025_Year&returnFacets=ALL"
+    url_ieee_2 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:gile%20requirements)%20AND%20(%22Full%20Text%20.AND.%20Metadata%22:usage%20scenario)%20OR%20(%22Full%20Text%20.AND.%20Metadata%22:user%20stories)%20AND%20(%22Abstract%22:language%20models)%20AND%20(%22All%20Metadata%22:elicitation)&ranges=2020_2025_Year"
+    url_ieee_3 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&ranges=2020_2025_Year"
+    url_ieee_4 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22Abstract%22:language%20model)%20AND%20(%22Abstract%22:requirements%20generation)&ranges=2022_2025_Year"
+    
+    #with IEEESources() as ieee:
+        #try:    
+        #    research_ieee_1 = ieee.get_all_researches(url_ieee_1)
+        #    with open(os.path.join("webscraping", "data","ieee_research_data_1.pkl"), "wb") as file:
+        #        pickle.dump(research_ieee_1, file)    
+        #    logger.debug(f"Pesquisa IEEE 1 concluída e salva em 'webscraping/data/ieee_research_data_1.pkl'")
+        #except Exception:
+        #    logger.error(f"Erro ao processar a pesquisa IEEE 1")
+        #    
+        #try:    
+        #    research_ieee_2 = ieee.get_all_researches(url_ieee_2)
+        #    with open(os.path.join("webscraping", "data","ieee_research_data_2.pkl"), "wb") as file:
+        #        pickle.dump(research_ieee_2, file)   
+        #    logger.debug(f"Pesquisa IEEE 2 concluída e salva em 'webscraping/data/ieee_research_data_2.pkl'")
+        #except Exception:
+        #    logger.error(f"Erro ao processar a pesquisa IEEE 2")
+        #    
+        #try:    
+        #    research_ieee_3 = ieee.get_all_researches(url_ieee_3)
+        #    with open(os.path.join("webscraping", "data","ieee_research_data_3.pkl"), "wb") as file:
+        #        pickle.dump(research_ieee_3, file)
+        #    logger.debug(f"Pesquisa IEEE 3 concluída e salva em 'webscraping/data/ieee_research_data_3.pkl'")
+        #except Exception:
+        #    logger.error(f"Erro ao processar a pesquisa IEEE 3")
+        #
+        #try:
+        #    research_ieee_4 = ieee.get_all_researches(url_ieee_4)
+        #    with open(os.path.join("webscraping", "data","ieee_research_data_4.pkl"), "wb") as file:
+        #        pickle.dump(research_ieee_4, file)
+        #    logger.debug(f"Pesquisa IEEE 4 concluída e salva em 'webscraping/data/ieee_research_data_4.pkl'")
+        #except Exception:
+        #    logger.error(f"Erro ao processar a pesquisa IEEE 4")
+            
+    url_acm_1 = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=all&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=agile&AfterMonth=5&AfterYear=2020&BeforeMonth=5&BeforeYear=2025"
+    url_acm_2 = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=requirements+generation&field4=Fulltext&text4=user+stories&field5=Fulltext&text5=user+story&field6=Fulltext&text6=agile&AfterMonth=1&AfterYear=2022&BeforeMonth=5&BeforeYear=2025"
+    
+    #with ACMSources() as acm:
+    #    try:
+    #        research_acm_1 = acm.get_all_researches(url_acm_1)
+    #        with open(os.path.join("webscraping", "data","acm_research_data_1.pkl"), "wb") as file:
+    #            pickle.dump(research_acm_1, file)
+    #        logger.debug(f"Pesquisa ACM 1 concluída e salva em 'webscraping/data/acm_research_data_1.pkl'")
+    #    except Exception:
+    #        logger.error(f"Erro ao processar a pesquisa ACM 1")
+    #    
+    #    try:
+    #        research_acm_2 = acm.get_all_researches(url_acm_2)
+    #        with open(os.path.join("webscraping", "data","acm_research_data_2.pkl"), "wb") as file:
+    #            pickle.dump(research_acm_2, file)
+    #        logger.debug(f"Pesquisa ACM 2 concluída e salva em 'webscraping/data/acm_research_data_2.pkl'")
+    #    except Exception:
+    #        logger.error(f"Erro ao processar a pesquisa ACM 2")
+            
+    elapsed_time = time.time() - start_time
+    logger.debug(f"Tempo total de execução: {elapsed_time:.2f} segundos")
