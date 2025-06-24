@@ -1,0 +1,1707 @@
+Received March 28, 2017, accepted May 11, 2017, date of publication June 19, 2017, date of current version July 7, 2017.
+Digital Object Identifier 10.1 109/ACCESS.2017.2710421
+Multilingual Source Code Analysis:
+A Systematic Literature Review
+ZAIGHAM MUSHTAQ, GHULAM RASOOL, AND BALAWAL SHEHZAD
+COMSATS Institute of Information Technology, Lahore Campus, Lahore 54000, Pakistan
+Corresponding author: Zaigham Mushtaq (zmqazi@gmail.com)
+ABSTRACT Contemporary software applications are developed using cross-language artifacts, which are
+interdependent with each other. The source code analysis of these applications requires the extraction
+and examination of artifacts, which are build using multiple programming languages along with their
+dependencies. A large number of studies presented on multilingual source code analysis and its applications
+in the last one and half decade. The objective of this systematic literature review (SLR) is to summarize
+state of the art and prominent areas for future research. This SLR is based on different techniques, tools, and
+methodologies to analyze multilingual source code applications. We nalized 56 multi-discipline published
+papers relevant to multilingual source code analysis and its applications out of 3820 papers, ltered through
+multi-stage search criterion. Based on our ndings, we highlight research gaps and challenges in the
+eld of multilingual applications. The research ndings are presented in the form of research problems,
+research contributions, challenges, and future prospects. We identied 46 research issues and requirements
+for analyzing multilingual applications and grouped them in 13 different software engineering domains.
+We examined the research contributions and mapped them with individual research problems. We presented
+the research contributions in the form of tools techniques and approaches that are presented in the form
+of research models, platforms, frameworks, prototype models, and case studies. Every research has its
+limitations or prospects for future research. We highlighted the limitations and future perspectives and
+grouped them in various software engineering domains. Most of the research trends and potential research
+areas are identied in static source code analysis, program comprehension, refactoring, reverse engineering,
+detection, and traceability of cross-language links, code coverage, security analysis, cross-language parsing,
+and abstraction of source code models.
+INDEX TERMS Software engineering, reverse engineering, software design, software architecture, software
+maintenance.
+I. INTRODUCTION
+Source code analysis provides valuable information for archi-
+tectural extraction, reverse engineering and reengineering of
+software applications. It helps in program understanding,
+software optimization, maintenance, and reuse. It is estimated
+that size of software in 2025 will be more than 1 trillion lines
+of code [11] that reect the importance of source code anal-
+ysis and manipulation in future. More than 29 applications
+of source code analysis for different domains of software
+engineering are highlighted by Kitchenham et al. [11]. The
+source code can be analyzed statically, dynamically or with a
+combination of both (Hybrid analysis) [5], [6].
+Modern software applications are moving from homoge-
+nous single source code applications towards the heteroge-
+neous multilingual environment. The applications of these
+heterogeneous multiple source code systems can be seenin web applications, enterprise applications (like J2EE) and
+complex embedded systems. The development paradigm is
+shifting from single language and technology to multiple
+languages and technologies. A number of applications and
+components developed in multiple language environments
+[19]. Various technologies are found in multiple languages
+in the form of heterogeneous applications (e.g., Java, XML,
+SQL etc.) [14], [15]. The source code analysis of these appli-
+cations is an important task and is necessarily required in
+application optimization, reuse and in reverse engineering. In
+this paper, we identied and discussed different multilingual
+applications and analysis of these applications through a
+systematic literature review.
+The focus of this paper is to present a comprehensive
+systematic literature review in the domain of multilingual
+source code analysis and its applications. A large number of
+VOLUME 5, 20172169-3536 
+2017 IEEE. Translations and content mining are permitted for academic research only.
+Personal use is also permitted, but republication/redistribution requires IEEE permission.
+See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.11307
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 1. Research questions.
+studies presented on this topic before the last decade. It is
+important to collect, analyze, classify and summarize state of
+the art research. To the best of our knowledge, there is still no
+systematic review on multilingual source code analysis and
+applications of multilingual source code in the literature. This
+SLR highlights different features of the research in the eld of
+multilingual source code analysis and applications developed
+with multiple technologies. To conduct an effective review
+study, we formalized basic search string to collect relevant
+research available in the domain of multilingual applications.
+We devised the assessment criteria, besides quality assess-
+ment criteria prescribed in [13]. We focused on different
+publications from renowned journals, conferences, and work-
+shops. Based on the systematic review criteria, we nalized
+56 research papers for further review and analysis, out of
+3820 total papers. The selected papers are empirically and
+qualitatively evaluated through multiple aspects and pre-
+sented in the form of different views. We found rising trends
+towards the development and analysis of multilingual appli-
+cations, still, there is a need for a generic and extendable
+solution for analysis of multilingual applications.
+We subdivided the study into four main sections. In Section
+II, we present research methodology for conducting system-
+atic literature review by dening research questions, domain
+for literature review, source of information, search criteria,
+search string, information extraction procedure and study
+selection/assessment criteria. In Section III, we synthesize the
+selected papers and present the results of systematic literature
+review in the form of multiple summarized Tables (1-25).
+In the end, we present the conclusion of the whole study
+in Section IV.
+II. RESEARCH METHODOLOGY
+The goal of conducting this systematic review is to recognize
+and categorize the best available procedures, models, tech-
+niques and tools used to analyze multilingual applications.
+The process of systematic literature review helps in discov-
+ery and analysis of research available with the concerned
+domain of studies [10]. The existing research is empirically
+evaluated in accordance with predened criteria. The results
+of the review provide scientic evidence by classifying the
+relevant studies. The systematic search procedure is provided
+by Kitchenham et al. [9] and the selection of primary studies
+method followed in [10]. We also selected guidelines for
+writing a literature review from Pautasso [41]. The populationis composed of publications found in the selected sources
+which apply procedures or strategies related to analyzing
+multilingual applications.
+A. REVIEW PROTOCOL
+The development of review protocol is the 1st step towards
+systematic literature review. The SLR protocol helps to des-
+ignate the search plan in the form of search strategies for
+the extraction of relevant literature. This process includes
+research questions, research scope, source of information,
+inclusion & exclusion criteria and literature assessment crite-
+ria. The process of conducting the systematic literature review
+follows the steps mentioned in Fig 1.
+FIGURE 1. Systematic literature review process.
+1) RESEARCH QUESTIONS
+In order to conduct a systematic review, it is essential to
+formulate the primary research questions. After specifying
+the research questions, the review procedure involves build-
+ing the search strategies to recognize and extract relevant
+studies [8]. The answers to these research questions are
+searched in the published literature using the procedures of
+systematic literature reviews as proposed by Kitchenham [10]
+and DARE/CDR criteria [13]. The basic intent of this review
+is to summarize the current state of the art research in
+MLSCA (Multilingual Source Code Analysis) domain and to
+identify efcient techniques used for MLSCA. We searched
+for MLSCA techniques that were empirically evaluated to
+identify needs for future research. The research questions
+are developed to evaluate the signicance of multilingual
+applications as mentioned in Table 1.
+11308 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 2. Keywords for the search term.
+2) SEARCH STRATEGY
+A well-organized research is required for extracting appropri-
+ate information and ltering irrelevant studies from focused
+research areas.
+The planning and formulation of effective search is an
+important step to nding out the meaningful research avail-
+able in the respective domain. We followed both automatic
+and manual search mechanism for the exploration of the
+search term. At rst, we performed automatic search followed
+by the manual search is executed. The automatic search is
+based on search string and is performed on search engines of
+relevant electronic data repositories. The purpose of the man-
+ual search is to gather more literature relevant to multilingual
+source code analysis domain. The manual search includes
+reference lists of relevant primary studies and gray literature.
+In order to ensure the extraction of relevant information, we
+limit our search terms on following conditions.
+Identication of major search keywords, based on for-
+mulated research questions. -
+Search for alternate words and synonyms for major
+keywords.
+Developing a search string by combining keywords with
+Boolean operator ``AND'', and alternate keyword with
+Boolean operator ``OR''.
+Search Term: The search term is the combination of key-
+words that precisely returns the relevant literature from a large
+number of studies. In order to ensure the reliability of search
+term, we analyzed the main concepts and terminologies in the
+domain of multilingual source code analysis. We recognized
+keywords used in the literature that is related to research
+questions. The meta-sentence for this literature review con-
+tains ``Analysis of Software Systems developed using
+thesource code ofMultiple Programming Languages''.
+We nalized initial keywords in Table 2 mentioned below
+required to be incorporated in search term relevant to research
+questions.After describing the keywords, we considered synonyms,
+alternatives, and hypernyms for each keyword. The result-
+ing data was discussed with local researcher's community.
+In order to formulate an effective search string aligned with
+the Metasearch sentence, the nalized keywords were con-
+catenated with Boolean operators (`AND' and `OR') and
+wildcard character (`'). The synonyms were combined with
+the help of `OR `operator. The use of wildcard allows the
+consideration of multiple alphanumeric characters as an alter-
+native of keywords. The use of OR operator provides an
+additional search space, whereas, the AND operator reduces
+the search space to be more specic with the relevant papers.
+For example, the rst pair of ORs combines several key-
+words for querying all the literature that refers to aspect
+``Many/Multiple'' in the domain of source code analysis.
+The search term is subdivided into three components. The
+rst part of the search term is related to the population for
+Multilingual or Multilanguage applications, the second part
+is related to their analysis and the third part corresponds to
+the source code of applications. For the effective query, we
+need to ensure the existence of all three components in a
+search term, therefore we applied AND operators among the
+components. In order to ensure that completeness of search
+results we applied OR operator in synonyms and relevant
+key terms. Finally, the search string with the combination of
+Boolean operators and the wildcard is mentioned as.
+((Multi) OR (Cross) OR (Hetero) OR (Hybrid) OR
+(Inter) OR (operability) OR (depend) OR (Lingual)
+OR (Language) OR (Artifact)) AND ((Analy) OR
+(Recover) OR (Revers) OR (Invest) OR (Synthes) OR
+(Detect)) AND ((Software) OR (Source) OR (Applica-
+tion) OR (Program) OR (Pars)).
+3) LITERATURE RESOURCES
+We conducted the primary search from online research
+databases and search engines (IEEE explore, Springer, ACM
+VOLUME 5, 2017 11309
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 3. Attributes of the research study.
+Digital Library, Science Direct and Web of knowledge),
+journal publications and conference proceedings. We also
+used Google and Google Scholar, however, the extracted
+results were also identied by the existing databases. There-
+fore, the results were not accumulated to overall count.
+4) DOMAINS FOR SYSTEMATIC REVIEW
+This systematic review focuses on the three domains, includ-
+ing Web-based Applications, Embedded Applications, and
+Enterprise Applications. The rationale to select these domains
+was to categorize the huge literature fetched during an initial
+search with the help of peer reviews. The factors to select
+these applications include trends of software development,
+domains with more extensive work and relevancy of the
+domain with cross-language analysis.
+5) THE FOCUS OF THE STUDY
+This process includes the extraction of related information
+by considering the type of study, important ideas, key factors
+and signicant strategies in each study which is essentially
+required to establish objective and subjective results [41].
+The study methodology is followed in [9]; these categories
+contains case studies, literature reviews, experiments, simu-
+lations, and surveys.
+6) KEY RESEARCH ATTRIBUTES
+The information is extracted for further analysis from each
+research paper in the form of specied template. Table 3
+presents the attribute specied for the extraction of informa-
+tion from primary studies.
+7) STUDY INCLUSION/EXCLUSION CRITERIA
+The initial search criterion is set to extract maximum publica-
+tions in MLSCA domain. To ensure most relevant research,
+the publication period from January 2001 to January 2016is considered. The database elds of title and abstract
+are searched from previously mentioned resources.
+Kitchenham [10] recommended that exclusion based on lan-
+guages should be avoided [19]. However, only papers written
+in English are included. Following criterion is determined to
+evaluate and select the research publications.
+The valid range of the research publication years must
+be from January 2001 to January 2016.
+The research papers must be of full-length papers.
+The selected papers must be relevant to the specied
+search string.
+Research papers must be written in English.
+The research must address the assessment criteria.
+B. SELECTION PROCESS
+Pautasso [41] proposed the research inclusion criteria. This
+criterion corresponds to the relevancy of the study with
+the research domain. After analyzing inclusion criteria, the
+exclusion criterion is applied by removing the studies which
+discuss the domain of MLSCA but do not provide any signif-
+icant research contribution. The search procedure produced
+3820 initial studies. Out of these studies, 163 are selected
+as being relevant, and 56 are selected as primary stud-
+ies (the complete list of primary studies is shown in
+Table 20 (Appendix). Table 4 shows the distribution of stud-
+ies found according to the sources used. In order to obtain
+independent assessments, three steps selection process is con-
+ducted, as illustrated in Fig 2.
+1) TITLE BASED SEARCH
+In the rst stage, duplicates and irrelevant papers are excluded
+manually based on titles. In our case, the share of irrele-
+vant papers was extremely large because research related to
+MLSCA cannot be distinguished from papers in the database
+search. After the rst stage, only 163 papers remained for next
+phase.
+11310 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+FIGURE 2. Selection process.
+TABLE 4. Selection process.
+2) ABSTRACT BASED SEARCH
+In the second stage, information in abstracts is analyzed and
+the papers are classied along with research approach for the
+analysis of multilingual applications. Research approaches
+include experiments, case studies, surveys, reviews, theories,
+and simulations. At this stage, we do not judge the quality of
+the empirical data. After this stage, 85 papers remained in the
+list.
+3) FULL TEXT-BASED ANALYSIS
+The empirical quality of the papers is completely evalu-
+ated at this stage. A full text based analysis is executed
+on the remaining 85 papers. The evaluation criteria involve
+DARE (Database of Abstracts of Reviews of Effects) and
+CDR (Centre for Reviews and Dissemination) criteria [13].
+In order to conduct nal data extraction following research
+questions are dened.
+Are the review's inclusion and exclusion criteria
+described and appropriate?
+Is the literature search likely to have covered all relevant
+studies?
+Did the reviewers assess the quality/validity of the
+included studies?
+Were the basic data/studies adequately described?
+All the questions are assessed and scored on the following
+criteria prescribed in [8]: Y (yes): the criteria clearly dened
+in the research, P (Partly), the criteria partially dened;
+N (no) the criteria not dened in the research. Each ques-
+tioned is scored as Y D1, PD0.5, ND0. The trend of the
+selection process is generally more inclusive. Only irrelevant
+papers are barred.
+Snow Ball Tracking: After applying all these lters, we
+applied snowball tracking by searching through reference
+list of each nalized study and ensured that no importantstudy was missed. It is important to mention that we nalized
+these papers after assessing the exclusion/inclusion criteria
+and quality assessment criteria. After applying the snowball
+tracking we identied 5 more studies and totally added up
+to 56 primary studies. The result of 56 nalized papers are
+presented in Table 20 (appendix).
+III. DATA ANALYSIS AND RESULTS
+This section summarizes the results and provides the descrip-
+tive evaluation of each study in a tabular format. This
+section discusses the problem denition, proposed solution,
+strengths and weaknesses of the included studies. Based on
+research evidence results, conclusion and recommendations
+are drawn.
+A. EVALUATION OF QUALITY ASSESSMENT CRITERIA
+This is the most important section as prescribed in Section
+II for a full text-based search that determines the quality of
+research papers and relevancy with the research topic. The
+Q1 is about inclusion and exclusion criteria and the results
+show that 80.2% described criteria is appropriate. The Q2 is
+about the relevancy of literature with the selected papers, the
+result shows that 55.7% of presented literature is appropriate
+to the subject. The result of Q3 shows 61.3% relevancy of
+quality and validity of the included studies. The result of Q4
+highlights 64.2% adequacy of the selected papers with the
+research topic. The overall quality assessment of the selected
+papers is 65.4% which is quite healthy. The overall quality
+assessment score of primary studies nalized is mentioned
+in Fig 3, whereas the individual quality assessment result of
+nalized studies is shown in Table 18 (appendix).
+B. SEARCH RESULTS
+We nalized 56 papers in stage-III out of 3820 searched
+papers (shown in Table 20 appendix), published during 2001
+to 2016. The publications in the form of different conferences,
+workshops and journals from renowned (publishers) digital
+libraries are considered for consultation, as mentioned in
+the research criteria. The selection ratio of nalized papers
+includes 60% from IEEE explore, 15% from Springer, 15%
+from ACM, 6% from Science Direct and 4% from IET and
+JUSC Journals. All the stage-III papers are evaluated rigor-
+ously through assessment criteria and quality assessment cri-
+teria formulated in the form of research questions. The status
+of the papers along with the ratio of selection is mentioned
+in Table 5.
+VOLUME 5, 2017 11311
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+FIGURE 3. Quality assessment score (Percentage).
+TABLE 5. Status of publications.
+TABLE 6. Selected publications and proceedings.
+The detail of the papers after nal selection is listed in
+Table 6. Most of the selected papers (34) are from IEEE
+Explore i.e. 61 %, whereas most the papers (43) are from
+conference proceedings i.e. 77%.
+The Table 19 (appendix) elaborates the selected papers in
+the form of their origin, publishers, and type of research pro-
+ceedings. The multiple research publications are also shown.
+Moreover, the categories (i.e. journal, conference, book or
+workshop) of the research publications are also mentioned in
+Table 19 (appendix).
+Fig 4 represents the number of publications w.r.t. year of
+publication. It is observed that majority of the publications
+i.e. 42 out of 56 starts from 2010 (75%) and out of these
+publications, 30 are from 2012 onwards, in which most of
+the proceedings published during 2013 to January 2016 i.e.
+25/56, 45%.
+The detail information of each research publications and
+proceedings is provided in Table 20 (appendix) in the form
+of Paper ID, Reference Number, Title of Selected Research
+FIGURE 4. Year-wise distribution of papers.
+FIGURE 5. Domain wise detail of research issues & requirements.
+Publications and Proceedings, topics/domain of the research
+study and Publication Venue. Each paper supports different
+and multiple domain and topic of study with respective plat-
+form and environment.
+C. ASSESSMENT AND DISCUSSION
+OF RESEARCH QUESTIONS
+Contemporary software applications are composed of mul-
+tiple programming languages. The analysis of these appli-
+cations is a key challenge for the software community. The
+importance of source code analysis in modern applications
+cannot be ignored [11]. Its signicance is proved and demand
+is increasing with the increase in the size of the source
+code [21], [48]. In this section, we analyzed the nalized
+56 primary studies based on our research questions. After
+the analysis of selected studies, we extracted the facts from
+diverse research domains of MLSCA. We discuss question
+wise assessment of the extracted information in this section.
+1) ASSESSMENT OF Q1: WHAT ARE THE RESEARCH
+PROBLEMS/REQUIREMENTS FOR MLSCAs?
+In this section, an insightful knowledge of the issues and
+requirements for the analysis of multilingual applications
+(MLAs) is presented. There are 46 different problems and
+requirements reported which are categorized in 13 software
+engineering domains. Each problem or requirement is marked
+by PR # (Problem/Requirement number). Table 7 provides
+the complete information about the concerns of multilingual
+source code analysis. We also mapped problems and require-
+ments with their respective domains in Table 7.
+Detail of issues and requirement for multilingual source
+code analysis (MLSCA):
+In this subsection, domain-wise detail of issues and
+requirements are presented. Fig 5 represents the percentage
+11312 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 7. Problems and requirements for multilanguage source code analysis.
+of research issues and requirements of MLSCA which are
+alienated with software engineering domains. Most discussed
+issues include Static Analysis 17%, Program Understand-
+ing & Reverse Engineering 15%, Cross Language Link
+Detection 15%, Dynamic Analysis 11%, Analysis of EAs 9%,Multiple Language IDEs 11%, Refactoring 9%, Source Code
+Reusability 8%, CIA 8%, Quality Assurance 9%, SW Mainte-
+nance 9%, Cross Language Security 4% and Semantic Anal-
+ysis 4%. Following domains comprehensively describe the
+problem and requirements from selected research.
+VOLUME 5, 2017 11313
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+a: DYNAMIC ANALYSIS OF MLAs
+Complex heterogeneous systems are composed of multiple
+subsystems that are interdependent and interact with each
+other. The analysis of these applications is quite helpful
+in better program understanding, re-engineering and reverse
+engineering. The overall behavior of the system cannot be
+studied unless we understand about how these components
+interact with each other [1].
+Due to complex and dynamic nature, the analysis of
+multilingual applications has become difcult and chal-
+lenging [32]. Understanding interaction of multiple lan-
+guages is difcult because of a large number of artifacts
+without integration and tool support [59]. The approaches
+at present can only extract and develop views only for
+the execution of the single system. The tool supports to
+recover views of application-level interaction behavior in
+complex heterogeneous systems is not available [1]. Dynamic
+WAs (web applications) are composed of intermingled source
+code of multiple programming languages (e.g., HTML, PHP,
+JavaScript, and CSS), which makes them complex and dif-
+cult to analyze and manage clones [39].
+Traceability across multilingual artices is another hot
+issue. Tractability analysis helps to spot the affected artifacts
+in the form of trace links. Traditional techniques are decient
+to support MLAs. Automatic tracking of object relations
+is required to support co-evolution of multi-language soft-
+ware systems [47]. The execution traces of heterogeneous
+applications like Ajax based applications are difcult to
+analyze [32].
+b: QUALITY ASSURANCE OF MLAs
+Quality assurance and debugging is an essential requirement
+for software applications. The testing and debugging of dis-
+tributed MLAs are challenging [2]. The existing software
+observational methods only support homogeneous applica-
+tions and are less scalable to support MLAs. These techniques
+suffer from concurrency issues. An effective tool support
+is required to ensure the quality of cross-language software
+applications [30]. At present, the heterogeneous applica-
+tions (HAs) suffer from cross-language bug localization prob-
+lem. Current bug xing techniques support homogeneous
+applications and in the existing research, the bug reports do
+not appear in the source code of HAs [62].
+c: SOURCE CODE REUSABILITY
+Modern software paradigm is focused towards cross language
+applications. Due to the complex nature of these applica-
+tions, analyses, modications, and reusability have become
+difcult and challenging [11]. A little support is available to
+analyze behavior and static verication of these systems [64].
+These applications require multi-language reusable com-
+ponents, tied though different types of les. All possi-
+ble instances of source code are required to be detected
+for reusability across MLAs. Moreover, the reusability of
+cross-language source code requires compiler support [66].Searching relevant source-code snippets is another challenge,
+which is required for software reusability [3]. Existing sys-
+tems necessitate an existing repository of relevant code sam-
+ples. However, for many libraries, such a repository does not
+exist. Source code recommendation mechanism is required
+because many libraries lack API documentation of reusable
+components.
+d: CROSS-LANGUAGE CHANGE IMPACT ANALYSIS (CIA)
+Change propagation & impact analysis across the multi-
+lingual artifacts is an essential requirement to understand
+MLAs [31]. Predicting change propagation in the source code
+is a key challenge in analysis and maintenance of multi-
+lingual enterprise applications [7]. A language-independent
+technique is required for evaluating the impact of change,
+maintaining code history and preventing errors [7]. The exist-
+ing CIA techniques only support single languages and lack
+context awareness [4]. These approaches cannot fully analyze
+the heterogeneous artifacts of different languages [29].
+e: CROSS-LANGUAGE LINK DETECTION
+The cross-language links (XLLs) are helpful in better pro-
+gram understanding, maintenance, error handling and refac-
+toring of MLAs. Modern software applications, for example
+in Java Enterprise Applications (JEAs), are composed of
+cross-language artifacts which are interdependent to each
+other. These artifacts are referred through semantic links.
+However, the relationships among these artifacts are not orga-
+nized and accustomed with hidden dependencies [44].
+The detection and managing dependencies in large MLAs
+is quite hard and challenging due to their complex and het-
+erogeneous nature [50]. There is no scalable, robust, general
+approach available for cross-language dependency detection.
+The existing techniques focused on single source code appli-
+cations [49]. A generic approach is required to specify cross-
+language links (XLL) [34].
+The available analysis tools are language specic. It is
+difcult to identify and refactor the cross-language links
+among the artifacts developed in a heterogeneous applica-
+tion [36]. A slight change in the code may affect the behavior
+of the application. Developing XLL rules and specication is
+a major challenge for research community [58]. Moreover,
+there is no standard approach available for binding multi-
+language artifacts [35]. The deciency of XLLs across MLAs
+damages productivity & stability of the software [58]. Cross-
+language references and relationships are also a key issue
+in the development of cross-language development environ-
+ments (IDEs). Existing IDEs are decient to completely
+analyze cross-language relations [46].
+f: SOFTWARE MAINTENANCE
+Modern web applications (WAs) are composed of hetero-
+geneous components. Due to low cost and a short time to
+market trends in software development, the maintenance and
+reusability have become challenging [20]. Another aspect
+of MLAs is the maintenance cost. As the size of the
+11314 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+application is increased the cost of maintenance is also
+increased, decreasing the quality & life of SW. There-
+fore, tools are required for efciently understanding MLAs
+globally [65].
+g: STATIC ANALYSIS
+As the software applications have become more diverse and
+heterogeneous, their static analysis is more demanding and
+difcult [11], [12], [22], [67], [68]. A multilingual application
+is composed of multiple languages that exhibit diverse func-
+tionalities. Therefore, monitoring quality during software
+development and maintaining consistency in these applica-
+tions is quite critical [68]. At present cross-language analy-
+sis, support is available only for homogeneous applications.
+Analyzing large software corpora [12] and clone detection
+of MLAs is difcult [22]. The analysis, visualization, and
+generation of software metrics of MLAs can only be cost
+effective by using automatic analysis tools that support the
+generation of source code metrics, dependency graphs, and
+software evolution analysis [56].
+The analysis of MLAs at a high level of integration is
+challenging [11]. The existing tool support for source code
+analysis is insufcient. They support few revisions and de-
+cient to address large scale multi-language applications [63].
+The available tools either focus analysis or transformation.
+A combination of both analysis and transformation tech-
+niques is required [40].
+The available cross-language code detection approa-
+ches [18] are compiler dependent and only support monolin-
+gual comparison. The major challenge in analyzing MLAs is
+to build a separate parser for each language participating in an
+application [25]. For example, web applications contain inter-
+mingled syntax of multiple source code languages. Therefore,
+it is difcult to parse source code of these languages. A robust
+multilingual parser is required to concurrently handle the
+source of multilingual applications [55].
+The modern web application contains multi-language
+dynamic pages, jumbled with each other. Static analysis of
+web applications (WAs) is hard & challenging due to the
+presence of dynamic HTML code & interaction of multiple
+languages in an application [60].
+Sugar libraries are a unique approach that extends the syn-
+tax of a programming language within the language. Extend-
+ing syntax of programming language to support multiple
+domains with sugar libraries is quite hard because they cannot
+be used as the main extension mechanism of the programming
+language [53]. The support of a large number of DSLs within
+a host language is required.
+Source Code Language Identication (SLI) techniques are
+used to identify multi-language and embedded code appli-
+cations. These techniques use meta-information for source
+code identication and classication. However, using meta-
+information is not always precise enough. Moreover, SLI
+techniques require a parser for each language that affects
+the correctness, performance and increase the maintenance
+cost [67].h: SOURCE CODE REFACTORING
+Modern software applications are composed of multiple
+language artifacts that interact with each other. The auto-
+mated multi-language refactoring (MLR) is not possible due
+to the different artifact types and modied denition of
+semantics [51]. The present refactoring tools are language-
+dependent that resist the smooth integration of development
+environments [57].
+Database refactoring or simple schema modication in
+MLAs is challenging. SQL modications are made manu-
+ally to adapt their applications [52]. The cross-language link
+frameworks do not support object oriented code refactoring
+when DB schema changed [52]. Cross-language refactor-
+ing (XLR) support is required in modern multi-language
+development environments (MLIDEs) because the existing
+IDEs only support refactoring of single languages [61].
+i: CROSS-LANGUAGE SECURITY
+As the size and complexity of the web applications are
+increased, the vulnerabilities across the applications are also
+increased. There is a need of an automated source code
+reviewer to deal security vulnerabilities as the manual solu-
+tions are slow, expensive and insufcient [26]. In [16], the
+challenge of language-based security is discussed. A precise
+algorithm for language-based security is required that checks
+programs for information leaks.
+j: PROGRAM UNDERSTANDING & REVERSE
+ENGINEERING (RE)
+SW development trends require more efforts in understanding
+legacy applications that promote re-engineering & reverse
+engineering. Extracting software change information of dif-
+ferent multilingual contents is essentially required in order
+to understand MLAs [31]. It is difcult to analyze HAs
+at an arbitrary level of granularity [17], which is essential
+for program understanding, re-engineering and reverse engi-
+neering. It is challenging for the software community to
+reverse engineer existing the legacy applications for source
+code improvement, evolution and modernization software
+applications [23]. The understanding topology of the web
+aggregates in WAs is another issue. A tool support is required
+for extraction, analysis, and visualization of aggregates for
+large hypertext web applications [24]. There is a desperate
+need for a framework or tool for automatic reverse engineer-
+ing of complex heterogeneous applications. The available
+techniques to reverse engineer object-oriented applications
+cannot reverse engineer modern Enterprise applications [33].
+k: MULTIPLE LANGUAGE DEVELOPMENT
+ENVIRONMENTS (MLDEs)
+The present Integrated Development Environments (IDEs)
+do not support the development of multi-language systems.
+Their support for multiple languages is weak because they are
+language specic and cannot process cross-language applica-
+tions [54]. Modern languages broadly use platform specic
+VOLUME 5, 2017 11315
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+APIs, causing interoperability concerns. They need to support
+portability of multiple languages across the platforms [27].
+Existing development environment do not completely sup-
+port relation across multi-language artifacts [46]. They do
+not visualize cross-language relations, decient in static
+checking for consistency of cross-language and cannot
+offer refactoring of artifacts in different languages [45].
+Moreover, modern IDEs do not support database refactor-
+ing or simple schema alteration [52]. A true multilingual
+IDE must cater Cross-language refactoring (XLR), multi-
+language meta information and interlanguage containment.
+A system is required that integrates IDE support across lan-
+guage boundaries. Common IDEs only support single lan-
+guage features [61].
+l: ANALYSIS OF ENTERPRISE APPLICATIONS (EAs)
+The information in large EAs is distributed across various
+components and their relationships. The analysis and reverse
+engineering of large EAs has become hard & challenging for
+the research community. The existing object-oriented reverse
+engineering techniques cannot support EAs [31]. The het-
+erogeneous nature of EAs is difcult to analyze and verify
+desirable properties and architectural constraints [42], [50].
+They may leave confusion in the form of conceptual errors in
+source code and particularly may conceal incorrect declara-
+tions of transaction scope. The developer's loose overview of
+the system and hide inconsistencies in the system [43].
+m: SEMANTIC ANALYSIS
+The clustering techniques for Semantic Analysis of MLAs
+uses similar feature types for estimating the distance between
+source code elements. The available techniques do not pro-
+duce good quality results in absence of adequate inputs [37].
+2) ASSESSMENT OF Q2: WHICH ARE RESEARCH
+CONTRIBUTIONS TO ADDRESS THE PROBLEMS
+OF MULTILINGUAL SOURCE CODE ANALYSIS?
+This section is an important part of the literature review.
+In order to answer the research question, we conduct an
+in-depth analysis of each selected paper and extracted the
+proposed solutions and benets of each research problem
+for MLSCAs. The research ndings are presented in a more
+concrete way in the form of tool support, approaches, and
+surveys for analyzing MLAs. Moreover, language support for
+analyzing MLAs and domains of MLSCA are also presented.
+a: SOURCE CODE LANGUAGES
+In this subsection, we recognized 40 different kinds of
+languages including General Purpose Languages (GPLs),
+Domain Specic Languages (DSLs), Meta Programming
+Languages (MPLs) and Intermediate Language Represen-
+tations (ILRs) (as mentioned in Fig: 6). The number of
+languages varies from 2 to 9 languages per research publi-
+cation. Most commonly supported languages in the research
+publications include OOPLs (30 occurrences, 57%), Java/J#
+(28 occurrences, 53%), HTML/Applets (14 occurrences,
+26%), Domain Specic Languages (11 occurrences, 21%),
+FIGURE 6. Distribution of languages (Percentage).
+FIGURE 7. Distribution of MLSCA domains (Percentage).
+C/CCC/C# (9 occurrences, 17%), Jscript (9 occurrences,
+17%), JEA/EJB (6 occurrences, 11%), SQL/RDBMS
+(7 occurrences, 13%) and XML (7 occurrences, 13%) etc.
+The ratio of remaining language representation is less
+than 10 %. The detail of source code languages is given
+in Table 9 (appendix).
+b: DOMAINS FOR SOURCE CODE ANALYSIS
+Multilingual source code analysis (MLSCA) is a quite diverse
+domain and its importance is realized in almost every domain
+of software engineering. In order to specify the research
+trends and contributions, we separately discuss research
+domains in multilingual source code analysis (MLSCA).
+The research contributions are grouped and categorized
+into 34 software engineering domains. Each model prof-
+fers separate analysis mechanism and support platform to
+accomplish their requirements. It is found that the research
+trends among all these domains, 62.3% (33 occurrences)
+of the population of the selected research studies relate
+to cross-language linking, dependency analysis, integration,
+11316 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+traceability, change analysis and interoperability. Some
+of the most important domains include Dynamic Anal-
+ysis 15%, Language Integration/ Interoperability 17%,
+Meta-model 11%, Multilanguage development environment/
+IDE 17 %, Pattern Analysis 6%, Program Understanding 9%,
+Re-engineering 6%, SW Refactoring 19%, Reuse 6%,
+Reverse Engineering 13%, Static Analysis 25%, SW Com-
+prehension 11%, SW Evolution 11%, SW Maintenance 15%,
+SW Modeling 11%, Traceability/Dependency Analysis 19%
+and Cross-Language Analysis (XLL) 17% etc. Figure 7
+shows the distribution of Multilanguage source code analysis
+domain (MLSCA), whereas the detail of domains is provided
+in Table 10 (appendix).
+FIGURE 8. Segregation of selected research population.
+Detail of Research Findings: In this section comprehensive
+review of research contribution is presented (marked with
+CN #). This research incorporates 56 multilingual source
+code analysis tools and approaches, including 38 tools,
+14 techniques, and 4 survey/review papers. Research contri-
+butions of each research study in this SLR describe research
+aspect, analysis mechanism, research domain, representation,
+languages, evaluation and pros of the study. Figure 8 repre-
+sents the division of selected research. This study is subdi-
+vided into tool support, technique and surveys & reviews for
+multilingual source code analysis.
+c: TOOL SUPPORT
+The tool support for Multilingual Source Code Analy-
+sis (MLSCA) is described in the form of the model,
+analysis mechanism, and experimental case studies. The
+complete detail about MLCSA tools is provided in
+Table 23 (Appendix). This section is comprised of differ-
+ent multilingual source code analysis tools, subdivided into
+dynamic analysis tools, static analysis tools, semantic anal-
+ysis tools and hybrid analysis tools. It is observed through
+literature review, that multilingual source code analysis tools
+are more focused towards static analysis (shown in Fig: 9).
+Out of these 38 tools, 68% (26) of the studies focused
+towards static analysis of multilingual applications, whereas
+the contribution of dynamic analysis tools is 21% (8) and
+semantic & hybrid analysis tools are 11% (4).
+FIGURE 9. Type of tool support.
+(i) DYNAMIC ANALYSIS TOOLS
+In order to analyze MLAs, different dynamic analysis tools
+are presented that covers intermediate representations, Ajax
+based applications, web applications (WAs) and enterprise
+applications (EAs). The attributes for the dynamic analysis
+tools are presented in Tables 9 and 10 in the form of tool
+name, analysis mechanism, model representation, type of the
+tool, language support, experimental evaluation, focus of the
+problem, domain of study and research outcome.
+The analysis mechanism includes holistic debugging [2],
+aspect weaving mechanism [28], trace link analysis [28],
+code clone detection [39], dependency analysis [44], [47],
+aspect-oriented programming [50], and evaluation of
+dynamic web contents [60]. These tools support analysis
+of general purpose languages (GPLs) including, Java, PHP,
+HTML, CORBA, J Script, EJBs etc. and domain-specic
+languages (DSLs) XML, Extend, Groovy, and UML etc.
+The tool support is also available for intermediate rep-
+resentation [2]. All of these tools are evaluated on the
+basis of different industrial environments [32], [39], [60],
+case studies [28], [44], simulated environments [2], proto-
+type/standalone tools [47], [50] and plugins [28], [44].
+Representation aspects of dynamic analysis tools is pre-
+sented in the form of intermediate/ bytecode represen-
+tation [2], [47], program transformation to JVM [28],
+GUI based FSM [32], high level language independent
+inter-component dependency & trace model [44], [47]
+and reverse engineering the interceptors to sequence dia-
+grams (UML) [50].
+The dynamic analysis tools show Robustness/ scalability
+[2], interoperability [28], effectiveness in model recovery
+[32], [47] and analysis of lightweight multilingual applica-
+tion [47]. In Table 8, the information of dynamic analysis
+tools is presented in the form of tool name, contribution #,
+analysis mechanism, model representation, language support
+and experimental evaluation.
+Table 9 provides the information about how dynamic
+analysis tools addresses the issues raised in Question # 1.
+In this Table, problems and requirements are mapped to
+the contributions for better understanding about dynamic
+VOLUME 5, 2017 11317
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 8. Dynamic analysis tools.
+TABLE 9. Dynamic analysis tools and support.
+analysis tools. This Table contains problem/ requirement #
+(mentioned in Table 7), contribution #, Domain of study
+(mentioned in appendix Table 22) and outcome of the study.
+(ii) STATIC ANALYSIS TOOLS
+In this section intuitive knowledge about static analysis
+tools for analysis of multi-language applications is pre-
+sented. These analysis tools help to analyze structure and
+intent of the software applications. These tools are used in
+Statistical/Empirical Analysis [12], Change Impact Analy-
+sis [22], [29], Content Analysis [24], Complexity Analy-
+sis [30], Object Relational Mapping [33], Software Visual-
+ization [42], [46], [57], Transactional Analysis [43], Analysis
+and modeling MLDE [45], [46], SQL Schema comparison
+[52], Refactoring [36], [51], [57], [65], Maintenance [42],
+[43], [64], Static low-level analysis [54], Lexical Analy-
+sis [55], Parsing source code metrics [56], Comprehension
+[62], Program Slicing [16], [64], Syntax Analysis [26], [53],
+multi commit software evolution analysis [63] and Pattern
+Analysis [65].
+All of these tools are evaluated on the basis of different
+prototype tools, case studies, frameworks, multi-language
+development environments and plug-ins. These tools support
+both General purpose languages (GPLs) and Domain-specic
+languages (DSLs). General purpose languages includeC/CCC, C#, Java, J#, JSP, PHP, Java Beans, JavaScript,
+HTML, VB ,Net, SQL, Python, Smalltalk, and Ruby. The
+domain specic languages include SCRO, OWL, RDF,
+RDFS, XML, Groovy, Coral, UML, URN, J-unit, Prolog,
+Hibernate, Haskell, and Rascal. The analysis mechanism of
+these tools support statistical evaluation of meta-model [12],
+object sensitive analysis using program slicing and chop-
+ping [16], source code parsing based on graph-queries [17],
+[28], extended algorithm for analyzing structural change [22],
+MVC based navigational model for static analysis [23], [38],
+modular framework for content/ authority graph analysis of
+web documents [24], context and ow sensitive analysis tool
+for detection of cross-site & taint-style scripting vulnerabil-
+ities in web applications [26], multi-perspective rule based
+change impact analysis [29], complexity analysis by pars-
+ing .net languages [30], object-relational mapping (ORM)
+meta model for enterprise applications [33], [51], generalized
+approach for cross-language binding and refactoring [36],
+transactional analysis of enterprise applications [42], [43],
+analysis and integration of multi-language development envi-
+ronment [45], [46], schema comparison library for detection
+of changes in SQL schemes [52], SugarJ, a unique parsing
+mechanism for Java-based extensible language [53], lan-
+guage independent meta-model for low level static analy-
+sis [54] and refactoring [57], concurrent & robust parsing of
+11318 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 10. Static analysis tools.
+MLAs using lexical analysis and CFG [55], layered approach
+for the generation of source code metrics [56], bug localiza-
+tion and ranking source code les in MLAs [62], analysis
+of mixed code heterogeneous source code at an arbitrary
+number of revisions [63], knowledge discovery and reverse
+engineering heterogeneous artifacts [64] and deprogramming
+by patterns recognition [65].
+In Table 11, the information about static analysis tools
+is provided with another aspect in which the problems and
+requirements are mapped with the contributions for better
+understanding. The contents of Table 11 include tool name,
+problem number (detailed domain based problems are men-
+tioned in Table 7), contribution number, the domain of study
+(mentioned in Appendix Table # 22) and tool support.
+(iii) SEMANTIC AND HYBRID ANALYSIS TOOLS
+In addition to the above-mentioned tools, some hybrid
+tools are also proposed that support both static and
+dynamic analysis mechanism. These tools perform Seman-
+tic Analysis [3], [25], Static & Semantic Analysis [25],Static & Dynamic Analysis [20] and Static, Semantic and
+Dynamic Analysis [40].
+The analysis mechanism in RECOS [3] provides explicit
+ontological model representations by using semantic knowl-
+edge base & point to analysis techniques. WARE [20] is
+used in program understanding and reverse engineer of web
+applications. This tool is used for extraction of source code
+in the form of graph repository. Authors in [25] provide
+Syntax and semantic analysis based parser for generation
+of abstract syntax tree (AST) and metrics of MLAs [25].
+A meta-modeling tool is presented in [40] that is used
+to analyze heterogeneous applications at the high level of
+integration [40].
+In Table 13 the issues raised in Q1 are mapped with
+the solutions (shown as CN #) in their respective domains.
+The semantic and hybrid analysis tools address four issues
+and requirements for analyzing MLAs. This Table highlights
+problem/ requirement # (mentioned in Table 7), contribu-
+tion #, Domain of study (mentioned in appendix Table 22)
+and outcome of the study.
+VOLUME 5, 2017 11319
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 11. Static analysis tools and support.
+TABLE 12. Semantic and hybrid analysis tools.
+d: TECHNIQUES FOR MULTILINGUAL
+SOURCE CODE ANALYSIS
+In this subsection different techniques to analyze multilin-
+gual applications are presented in the form of the mathe-
+matical model, high-level model, graphical relational model,semantic model, UML model, framework, and algorithm.
+The analysis mechanism contains dynamic analysis, static
+analysis, semantic analysis, change propagation/impact anal-
+ysis, data ow analysis, complexity analysis, ne-grained
+analysis, interoperability analysis, dependency graph, content
+11320 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 13. Semantic and hybrid analysis tools and support.
+TABLE 14. Techniques for multilingual source code analysis.
+& authority graph, abstract syntax tree, navigational models,
+comparative analysis and future guidelines. The techniques
+are presented in the form of algorithms [1], [31], [49], mathe-
+matical model [7], case studies [4], [7], [18], [31], [34], [35],
+[37], [58], frameworks/platforms [49], [58], [59]. Table 14
+provides brief of each contribution in the form of analysis
+technique, analysis mechanism, language support and exper-
+imental evaluation.
+In Table 15 each approach is described with their prob-
+lems with their solution, enhanced with research domains
+and research support. In this Table, the problems (PR #) are
+mapped to the solutions (CN #).e: SURVEYS AND REVIEWS FOR MLSCA
+In this subsection, the importance of source code analysis in
+MLAs is presented in terms of history, basics, development
+environments, and applications. The study is presented in the
+form of surveys and empirical evaluations. Table 16 presents
+the summarized information.
+3) ASSESSMENT OF Q3: WHAT ARE THE SHORTCOMINGS
+AND PROSPECTS OF CURRENT RESEARCH IN
+MULTILINGUAL SOURCE CODE ANALYSIS (MLSCA)?
+Each research has its limitations or future guidelines
+for conducting further investigation and improvement.
+VOLUME 5, 2017 11321
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 15. Techniques for multilingual source code analysis and support.
+TABLE 16. Surveys and reviews for MLSCA.
+In this subsection, limitations and future work of different
+approaches are presented. The recent research comprehen-
+sively describes the trends and approaches for source code
+analysis of multilingual applications. There are a number of
+recent and future directions presented to analyze multilingual
+applications but their scope is limited [11].
+In this paper, 56 issues are recognized individually from
+selected research contributions which are marked with LF #.
+These limitations or future work are separated into 13 soft-
+ware engineering domains. The comprehensive detail is men-
+tioned in Table 17.
+Detail of issues and requirements for multilingual source
+code analysis (MLSCA): In this subsection, domain-wise
+detail of shortcoming and research prospects are presented
+for further study. The percentage of research ndings. These
+results include, Static Analysis 25%, Program Understanding
+& RE 22%, XLL Detection 16%, Dynamic Analysis 15%,
+Source Code Refactoring 11%, Change Impact Analysis 9%,
+Multiple Language IDEs 9%, Analysis of EAs 7%, Quality
+Assurance 5%, Code Reusability 4%, SW maintenance 4%,
+Cross-language Security 4% and Semantic Analysis 4%.
+The following domains comprehensively describe the
+problem and requirements from selected research.a: DYNAMIC ANALYSIS
+In [1], recovery of Interaction across heterogeneous applica-
+tions (HAs) is discussed. This approach is exclusively used
+for extraction and recovery of intersystem interaction behav-
+ior to analyze HAs. A graphical visualization and analysis of
+the concurrent behavior of generated views are required for
+effective analysis.
+In [32], dynamic analysis and reverse engineering of
+Ajax applications (ReAjax) are performed by building FSM
+through execution traces. The proposed tool can be used for
+test case generation and reliability is required to be tested on a
+case study. Traceability across multilingual artices is deter-
+mined by a generic traceability modeling tool, Lässig [47].
+This tool performs model-to-text transformations and mark
+affected artifacts in the form of trace links. However, in the
+complex transformation of different type objects this tool
+returns only a single trace link [47].
+In [59], an effective approach for integration of multi-
+ple languages is presented using Meta Programming Sys-
+tem (MPS) on Eclipse Platform. This approach needs empir-
+ical assessment and further improvements for persistence
+& categorization in cross-language constraints. In [60],
+a dynamic analysis of web applications (Was) is presented
+11322 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 17. Limitations and future work for multilanguage source code applications.
+that recover UML model by analyzing the multi-language
+code during program execution. This approach has certain
+limitations. The comprehensive behavior of the applications
+resulted in incomplete UML model also needs empirical
+evaluation. Moreover, this technique does not support Java
+platform.b: QUALITYASSURANCE OF MLAs
+In [2], a holistic debugging tool for quality assurance of dis-
+tributed MLAs is presented. The proposed approach is limited
+to examine few properties of source code. Testing software
+applications in a simulated environment are the future work
+of this tool.
+VOLUME 5, 2017 11323
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+The technique presented in the form of MSIL tool [30],
+support complexity analysis of MLAs & development of
+language independent parsers by using intermediate repre-
+sentation. However, this tool only supports languages of.Net
+development environment.
+In [62], a cross-language bug localization algorithm &
+language translation tool (CrosLocator) is presented. The
+performance of tool needs further testing & improvement
+in bug localization and query reformulations methods to re-
+originate the terms of bug reports is the future prospects of
+the research.
+c: SOURCE CODE REUSABILITY
+In [64], analysis, reverse engineering, and reusability of het-
+erogeneous multi-language artifacts are presented by build-
+ing knowledge discovery meta-model [64]. In future, more
+source languages and component composition/conguration
+languages are needed to be incorporated in the analysis
+model.
+A simple approach for cross-language source code inves-
+tigation and reusability is presented in [18]. The proposed
+model utilize sliding windows for source code comparison.
+Cross-language similarity analysis is the future work of this
+approach.
+d: CROSS-LANGUAGE CHANGE IMPACT ANALYSIS (CIA)
+Domain-based change propagation and impact analysis
+approach [7] is helpful in evaluating the impact of change,
+maintaining code history and preventing errors in enterprise
+applications (EAs). This approach uses variability-aware CIA
+methods in multi-language software product lines (SPLs).
+However, this approach is insufcient for systems which
+throw functionality with few user interface components.
+The empirical assessment is also required to evaluate these
+systems.
+Cross-language links (XLLs) help to understand change
+propagation & impact analysis across the multilingual arti-
+facts. XLLs are built dynamically, therefore a combination
+of static and dynamic analysis techniques are required. The
+existing CIA techniques only support single languages and
+lack context awareness to improve the accuracy of condi-
+tional system dependency graph (CSDG) [4]. In order to
+analyze the heterogeneous artifacts of different languages a
+systematic and rened dependency detection mechanism is
+required [29].
+e: CROSS-LANGUAGE LINK DETECTION
+Dependency analysis / Cross-language links (XLL) can be
+helpful in better program understanding, analysis, mainte-
+nance, error handling and refactoring MLAs. There are a
+number of approaches presented to handle cross-language
+dependencies across MLAs. The detection and managing of
+dependencies in large MLAs are quite hard and challenging
+due to their complex and heterogeneous nature.
+GenDeMoG [44] is a tool that determines cross-language
+dependency across various multi-language artifacts. This toolidenties explicit inter-component dependency across a
+multi-language enterprise system. But this tool is not gener-
+alized for all enterprise applications. The algorithm of Gen-
+DeMoG is not complete and only mines cross-component
+dependencies [44].
+In [49], a simple, generic and extendable algorithm is pro-
+posed for cross-language dependency detection. The system
+needs classication according to language and its size. The
+behavior of the system needs to be examined at the compo-
+nent level. The accuracy of the system needs improvement.
+Cross-language links are analyzed in Java and Domain
+Specic Languages (DSLs) [36], [58]. In [36], a multilingual
+platform is proposed for the discovery, management, and
+refactoring XLLs in Java & DSLs. However, the tool support
+for XLLs in DSLs and integration with legacy applications
+is required. Moreover, identication of cross-language links
+is also required in between two general-purpose languages or
+in two declarative DSLs [58]. Cross-language artifact binding
+and refactoring in another challenge in MLAs [35].
+A generic approach is presented in [34] to analyze and
+refactor cross-language code by explicitly specifying and
+exploiting semantic links. However, the tool support is lim-
+ited for refactoring languages and needs to support more
+languages and sample link specications in future.
+f: SOFTWARE MAINTENANCE
+Analysis and reverse engineering of heterogeneous compo-
+nents of web applications are carried by WARE tool [20].
+This tool is helpful for understanding, maintenance and evo-
+lution of heterogeneous web applications. However, the qual-
+ity assessment of the tool needs empirical evaluation. The
+automatic, dynamic & object oriented support is also missing
+in this tool [20].
+Deprogramming is a reverse process that converts source
+code into concept, designs, and patterns. The proposed tool,
+Dep (deprogramming) abstracts source code into dependency
+graph and then mines to design patterns. The Dep tool
+is needed to be commonly employed in managing source
+code repositories, SW optimizations, and recommendation of
+refactoring targets [65].
+g: STATIC ANALYSIS
+Static analysis of large multilingual software is carried out
+by Pangea [12]. The presented tool provides a data reposi-
+tory for more systems & allows empirical investigation and
+helps in comparative statistical analyses across programming
+languages. Pangea has limited data repository and requires
+a diverse data repository to accommodate more Object
+Oriented languages [12].
+Cross-language analysis & clone detection is supported
+by Diff/TS tool. This tool performs ne-grained analysis of
+structural changes in the form of control ow graphs during
+virtual execution. However, the whole process is time con-
+suming & inexible. Future work includes accumulation of
+more compound and performance enhancement operations
+on large trees [22].
+11324 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+In the case of multi-language source code applications,
+the key challenge is to create a parser for each source code
+language [25]. This paper recommends parsers containing a
+modern multi-language feature that support complete infor-
+mation about source code and provide abstract syntax tree of
+multi-language applications. The proposed parser is limited
+to C/CCC languages. Future work is to use a systematic
+approach to analyzing the maturity of parsers using Open
+Maturity Model or to device some contemporary measure-
+ment techniques [25].
+RASCAL is a Domain-specic language (DSL) that is
+used for analysis & transformation of complex heterogeneous
+applications (HAs) [40]. The problem with RASCAL is that
+it generally supports Object Oriented Languages. Moreover,
+its performance has not been completely evaluated in terms
+of its design and implementation.
+Sugar libraries present a unique concept to extend the
+syntax of a programming language within the language.
+In [53], presented a SugarJ library, embedded with DSLs
+which is useful in artifacts reusability and handling soft-
+ware complexity. However, the composition of grammar and
+applying desugaring rules may cause conicts in some case
+studies.
+A lightweight robust multilingual parsing approach is pre-
+sented in [55] using Island grammars for concurrent parsing
+of MLAs in the form of the parse tree. This approach is
+generalized only for JSP and other dynamic web content
+paradigms.
+The analysis, visualization, and generation of software
+metrics of MLAs can only be cost effective by using auto-
+matic analysis tools that support the generation of source code
+metrics, dependency graphs, and software evolution analy-
+sis [56]. In [56], Analizo toolkit is presented that supports
+analysis and visualization of MLAs in the form of source code
+metrics, dependency graphs, and evolution analysis. This tool
+is based on Doxygen parser which cannot parse the source
+code completely. Moreover, this tool does not support web
+applications and a web-based version is the future work of
+Analizo toolkit.
+An open source static analysis tool LISA is presented
+[63] to analyze language independent online source code
+repositories. This tool efciently computes code metrics with
+multiple revisions. However, this tool requires an independent
+parser for each language. It lacks understanding of the global
+structure of software applications. Improvement in parsing
+speed is another issue.
+h: SOURCE CODE REFACTORING
+In [51], automated multi-language refactoring (MLR) is pre-
+sented using object-relational mapping (Hibernate ORM)
+with the database. It is difcult to build a generic approach
+for automatic refactoring in MLAs. Preserving wide range of
+useful semantic modications of single artifact types is quite
+hard.
+In [54], a language independent meta-modeling tool
+X-DEVELOP is presented that support analysis andrefactoring of multiple languages. However, this tool has
+weak recognition of multi-language components. More-
+over, X-DEVELOP lacks support in generalization, dynamic
+language contents, upcoming languages and low-level
+languages [54].
+In [57], a language-independent meta-model FAMIX
+(on a refactoring engine) is presented to refactor source code
+of object oriented programming languages (OOPLs). How-
+ever, this tool requires evaluation on more case studies. The
+future work is required to extend the tool with more languages
+like CCC, Ada & COBOL.
+In [52], SQL schema compare library is presented to
+adapt SQL modications for database analysis and refac-
+toring of modern multi-language applications. To support
+database access with JDBC and Java Persistence API (JPA),
+the SQL schema compare library is needed to be inte-
+grated with Eclipse plug-in. The future aim is to highlight
+those SQL statements and JPA entities which mismatch with
+SQL schema.
+i: CROSS-LANGUAGE SECURITY
+Detection of cross-site scripting vulnerabilities in scripting
+languages is determined by an open source static source code
+analysis tool ``Pixy''. The process of vulnerability detection
+is manual, therefore an automated mechanism is required in
+developing web applications especially for large and complex
+applications [26].
+Language-based security is important for prevention in
+cross-language information leaks. JAONA [16] uses security
+algorithms to check information leaks. However, this model
+only support Java based languages.
+j: PROGRAM UNDERSTANDING, RE-ENGINEERING,
+AND REVERSE ENGINEERING IN MLAs
+Understanding legacy applications require more effort for
+refactoring, re-engineering & reverse engineering. Generic &
+extensible solutions are required for evolution/modernization
+of existing systems.
+GUPRO supports multiple program analysis techniques
+using graph technology that helps in program understand-
+ing, re-engineering and reverse engineering of multilingual
+software applications [17]. In future, this tool is needed to be
+integrated with other reengineering tools via GXL-interfaces.
+MoDISCO [23] is an open source model that reverse engi-
+neer legacy artifacts into relevant model based reviews. The
+proposed solution is suitable for small & medium projects and
+requires empirical evaluation on industrial projects.
+The topology of the web applications is provided by
+TARENT that helps in extraction, analysis, and visualization
+of aggregates for large hypertext web applications [24]. The
+available tool focuses on the analysis of web documents only.
+There is a need to formalize a general theory of aggregates
+(mathematically), including different kinds of topological
+models.
+Extracting change information from source code helps
+in better understanding MLAs. In [31], an improved tree
+VOLUME 5, 2017 11325
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 18. Quality assessment criteria.
+matching algorithm is presented. However, this algorithm has
+limited support for small and average projects only.
+A reverse engineering tool I2SD is discussed in [50]. This
+tool visually represents sequence diagrams of the interceptor
+model. However, the I2SD tool is needed to be extended
+with recent extensions & validation is required through case
+studies.
+Jiang et al. [33] presented a meta-modeling tool, DATES
+for reverse engineering of modern enterprise applica-
+tions (EAs). The proposed tool recovers design information
+and design quality of object-oriented enterprise applications.
+However, DATES is limited for java based applications and
+requires more evaluation on other enterprise applications.
+k: MULTIPLE LANGUAGE DEVELOPMENT
+ENVIRONMENTS (MLDE)
+Automated cross-language references and relationship are
+key issues in the development of multi-language software
+systems for Integrated Development Environments (IDEs).
+The existing development environment does not completely
+support relations across multi-language artifacts.
+The tool supporting MLDE provides a limited represen-
+tation of cross-language relationships. Moreover, languagerepresentation needs to be extended for visual languages like
+UML languages [45].
+In [46], a prototype tool, TexMo is presented for static
+analysis, refactoring and visualization of cross-language rela-
+tions. However, this tool is manual and requires automatic
+detection of cross-language relations. The establishment of
+xed and string transformation relations is the future work of
+this tool.
+In [61], a high-level research design and model are pre-
+sented that support Multilingual Integrated Development
+Environments (MLIDE). Analyzing scalability across multi-
+language components is required for the proposed model.
+Portability across multiple language platforms is handled
+by an aspect weaving mechanism [27]. This paper pro-
+poses aspect-oriented programming to address portability
+with regard to languages that target multiple platforms. The
+future work in [27] is highlighted to address portability
+concerns of software product lines by adding aspects and
+addressing dependencies to multiple platforms.
+l: ANALYSIS OF ENTERPRISE APPLICATIONS
+In large applications like Java Enterprise Applications
+(JEA's), the information is distributed across various
+11326 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 19. Distribution of research papers.
+components and their relationships. It is hard to analyze the
+heterogeneous nature of JEAs and verify desirable properties
+& architectural constraints [42]. In [43], a tool MooseJEE
+is presented as an extension of Moose to analyze the trans-
+actional scope of JEAs. This tool visualizes structural and
+behavioral anomalies of transaction scope. MooseJEE is lim-
+ited in terms of quality & requires a generic and extensible
+representation to analyze JEAs. Moreover, the tool is focused
+only for Java EnterpriseAapplications.
+m: SEMANTIC ANALYSIS
+Semantic analysis approach is presented in [3] and [37].
+The research in [3] investigated the semantic annotations and
+domain ontologies for searching and recovery of source code
+snippets on multiple source code libraries. This approach
+needs improvement in search precision and ranking. It also
+requires a repository of relevant code samples.
+The proposed approach in [37] combines multiple fea-
+tures types and applies automated weighing on features to
+improve information quality and to reduce noise. However,
+this approach requires enhancement for clustering at multiple
+hierarchical levels.
+D. POTENTIAL AREAS FOR FUTURE RESEARCH
+Before completing our discussion and proceeding towards
+conclusion section, it is pertinent to discuss some of the
+key areas that require improvement and has the potential for
+further research. We identied key areas after in-depthanalysis and peer review of all the nalized studies. The out-
+come of multilingual source code analysis requires, visual-
+ization of cross-language source code artifacts [1], [45], [56],
+extraction and generalization of cross-language components
+and their relationships [44], [46], [54], [64], performance
+and accuracy of analysis mechanism [44], [49], scalability of
+cross-language analysis techniques [44], [61], code coverage
+of multilingual components [7], similarity analysis and clone
+detection [18], [22], advanced parsing techniques to ana-
+lyze range of multilingual applications [25], [55], [56], [63],
+context awareness of multilingual applications [4], gener-
+ation of complete source code documentation [60], com-
+pleteness of approach for change impact and dependency
+analysis by examining the cross-language artifacts and their
+links [4], [7], [29], optimization and maintenance of multi-
+lingual source code repositories [65], generalized approach
+for vulnerability detection and prevention of information
+leaks [16], [26], program understanding, reverse engineer-
+ing and refactoring support for medium and large scale
+multilingual applications [23], [31], [33], [34], [50], [51],
+change classication and evolution analysis [56] and porta-
+bility across multiple language platforms by addressing
+dependencies [27].
+IV. CONCLUSION
+The basic purpose of conducting this research is to pro-
+vide state of the art research available for Multilingual
+Source Code Analysis (MLSCA). This research provides
+VOLUME 5, 2017 11327
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 20. Finalized list of primary studies.
+11328 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 20. (Continued.) Finalized list of primary studies.
+understanding about MLSCA, its applicability, and prospects
+of software engineering domains. In this research, we pre-
+sented a review of the research contributions presented in the
+form of models, tools, domains and techniques to analyze
+multilingual applications. In order to extract precisepragmatic evidence, we devised review methodology,
+focused domains, research questions, sources of informa-
+tion from renowned publishers, inclusion & exclusion cri-
+teria, basic search string, type of information criteria and
+study assessment criteria. We searched 3820 research papers
+VOLUME 5, 2017 11329
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 21. Programming languages.
+from selected research venues during January 2001 to
+January 2016. By applying 3 staged rigorous selection cri-
+teria, we nalized 56 publications for further evaluation. The
+detailed information of these selected publications is pre-
+sented in the form of publisher, proceedings, year and country
+of publication along with the research topic in Table 6. It is
+found that most of the software applications are multilingual
+in nature and this trend is creeping day by day. It is observed
+that MLSCA domain is quite widespread and most recent for
+the research community. We found that maximum research
+started from 2010 (i.e. 75%) and this tendency is inclining
+with the passage of time as 23.2% of the whole publications
+during the last two years. The quality assessment criteriadetermine relevance, adequacy, quality and validity of the
+research domain appropriate to the selected publications. The
+overall assessment with respect to prescribed criteria is 66%
+which is quite aligned with the research topic. The results of
+assessment criteria are presented in Table 18 (Appendix).
+A. RESEARCH PROBLEMS
+Identication of research requirements and issues is the
+rst step to building the research foundation of literature
+review ndings. In this research, we recognized 46 differ-
+ent research problems and requirements to analyze multi-
+lingual applications. Each issue is marked with PR #). The
+issues and requirements are divided into 13 different software
+11330 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 22. SW engineering domains.
+engineering domains. The majority of the issues include
+Static Analysis 26%, Program Understanding & Reverse
+Engineering 15%, Cross Language Link Detection 13%,
+Dynamic Analysis 11%, Analysis of Enterprise Applica-
+tions 11% and Multiple Language Integrated Development
+Environments 11%. The remaining portion of issues is less
+than 10%. The summary of reported problems and require-
+ments of multilingual source code analysis is presented in Fig
+5 and the complete detail is mentioned in Table 7.
+B. RESEARCH CONTRIBUTIONS
+In this research, we identied the support of multilingual
+source code applications, languages, and domains in the form
+of research models, platforms, frameworks, prototype models
+or case studies. The features of selected primary studies
+with their strengths and limitations are highlighted in the
+respective Tables. Each research contribution is marked withCN # (contribution number) as a solution of par-
+ticular problem or requirement which is mapped by
+PR # (problem/requirement number). The contributions are
+separated into 38 tools & approaches, 14 techniques, and
+4 surveys. They focus general purpose languages, Domain
+Specic Languages/ Meta-languages, and intermediate repre-
+sentations. Each research offers separate analysis mechanism
+and supports to accomplish their requirements. They focus
+multiple domains of software engineering. The analysis tools
+are further divided into static analysis tools (26), dynamic
+analysis tools (8) and semantic/hybrid analysis tools (4).
+Each tool represents the model, analysis mechanism, source
+code languages and experimental case studies. These tools
+are evaluated through frameworks, development environ-
+ments, case studies, prototypes, plug-ins, and simulators. The
+results show that proposed model and analysis mechanism
+of each contribution support different languages and are
+VOLUME 5, 2017 11331
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 23. Tools for multilingual source code analysis.
+evaluated through their respective case studies. Moreover,
+14 different techniques and 4 surveys are presented to ana-
+lyze multilingual applications. The analysis techniques arepresented in the form of a models, frameworks or algo-
+rithms. The analysis models include mathematical, graphical,
+UML, semantic or high-level models. The techniques are
+11332 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 24. Conference & workshop proceedings.
+evaluated mathematically, through case studies or by using
+some framework/platform. The surveys or reviews highlight
+the importance of source code analysis, multi-language IDEs,
+cross-language analysis, refactoring and empirical evaluation
+of multi-language applications. The detail of research contri-
+butions is mentioned in Tables 9-17.
+C. SOURCE CODE LANGUAGES
+A number of multidiscipline languages are discussed in
+this literature review in the form of General Purpose
+Languages (GPLs) containing C/CCC, Java,Net, HTML
+etc, Domain Specic Languages (DSLs) /Meta Program-
+ming Languages (MPLs) comprising XML, Spring, Xtend,
+RDF etc and Intermediate Representations (Byte Code).
+These languages target web based applications, enterprise
+applications, heterogeneous applications, integrated devel-
+opment environments, cross language applications, embed-
+ded applications and legacy applications. The collection
+of selected research supports 40 different kinds of pro-
+gramming languages. Maximum numbers of languages
+discussed are from 9 to 2 languages per publication.
+The research trends are more likely towards analysis of
+OOP 57%, Java 53%, HTML/Applets 26%, DSLs 21% and
+C/CCC/C# 17%. The remaining languages have less con-
+tribution than 17 %. The summary of source code lan-
+guages is mentioned in Fig 6, whereas the detail is provided
+in Table 21 (appendix).D. DOMAINS FOR SOURCE CODE ANALYSIS
+The research trends identied to analyze multilingual appli-
+cations are grouped into 34 domains, recognize almost from
+every eld of software engineering. The detail is provided
+in Table 22 (appendix). During analysis, it is found that
+the research community is inclined towards Static Analysis
+25%, Program Understanding & Reverse Engineering 22%,
+XLL Detection 16%, Dynamic Analysis 15%, Source Code
+Refactoring 11%, Change Impact Analysis 9% and Multi
+Language IDEs 9%, whereas the contribution of remaining
+domains is less than 9% (summarized in Fig 7).
+E. ISSUES AND FUTURE RESEARCH
+During the review, it is observed that this research area is
+widely spread across various software engineering domains,
+continuously growing and has an opportunity for further
+improvements and enhancements. Various MLSCA areas are
+still open for further research as mentioned in the assessment
+of Q3. There are 13 domains that highlight research prospects
+for future research. Table 17 describes 56 limitations and
+future work associated with their respective domains. These
+domains include Static Analysis 25%, Program Understand-
+ing & RE 22%, XLL Detection 16%, Dynamic Analysis 15%,
+Source Code Refactoring 11%, Change Impact Analysis 9%
+and Multiple Language IDEs 9%. Whereas, the rest of the
+domains are less than 9% (summarized in Figure 8). The
+highlighted domains require advancement in performance
+VOLUME 5, 2017 11333
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+TABLE 25. Abbreviations.
+and accuracy of analysis mechanism, scalability of parsing
+techniques, extraction and visualization of cross-language
+artifacts, their relationships and dependencies. Completeness
+in source code security, coverage, clone detection, similarity
+analysis, change impact, classication and evolution analysis
+are required in multilingual applications. Moreover, man-
+aging source code repositories, portability across multiple
+language platforms and document generation from multilin-
+gual source code are the areas that need attention for future
+research.
+APPENDIX
+See Tables 1825.
+REFERENCES
+[1] C. Ackermann, M. Lindvall, and R. Cleaveland, ``Recovering views
+of inter-system interaction behaviors,'' in Proc. Reverse Eng. WCRE,
+Oct. 2009, pp. 5361.
+[2] L. Albertsson, ``Holistic debuggingenabling instruction set simulation
+for software quality assurance,'' in Proc. 14th IEEE Int. Symp. Modeling,
+Anal. Simulation Comput. Telecommun. Syst. (MASCOTS), Sep. 2006,
+pp. 96103.
+[3] C. V. Alexandro and H. C. Gall, ``Rapid multi-purpose, multi-commit
+code analysis,'' in Proc. 37th Int. Conf. Softw. Eng., vol. 2. May 2015,
+pp. 635638.
+[4] A. Alnusair, T. Zhao, and E. Bodden, ``Effective API navigation and
+reuse,'' in Proc. IEEE Int. Conf. Inf. Reuse Integr. (IRI), Aug. 2010,
+pp. 712.
+[5] F. Angerer, ``Variability-aware change impact analysis of multi-language
+product lines,'' in Proc. 29th ACM/IEEE Int. Conf. Autom. Softw. Eng.,
+Sep. 2004, pp. 903906.
+[6] T. B. C. Arias, P. Avgeriou, and P. America, ``Analyzing the actual
+execution of a large software-intensive system for determining
+dependencies,'' in Proc. Reverse Eng. WCRE , Oct. 2008,
+pp. 4958.
+[7] A. Aryani, F. Perin, M. Lungu, A. N. Mahmood, and O. Nierstrasz, ``Can
+we predict dependencies using domain information?'' in Proc. Reverse
+Eng. WCRE, 2011, pp. 5564.
+[8] A. Aryani, I. D. Peake, and M. Hamilton, ``Domain-based change propa-
+gation analysis: An enterprise system case study,'' in Proc. ICSM, 2010,
+pp. 19.[9] B. Kitchenham et al., ``Systematic literature reviews in software engineer-
+ing - A systematic literature review,'' Inf. Softw. Technol., vol. 51, no. 1,
+pp. 715, 2009.
+[10] B. Kitchenham, ``Procedures for undertaking systematic reviews: Joint
+technical report,'' Dept. Comput. Sci., Keele Univ., Keele, U.K.,
+Tech. Rep. TR/SE-0401, 2004.
+[11] B. Kitchenham, T. Dyba, and M. Jorgensen, ``Evidence-based software
+engineering,'' in Proc. 26th Int. Conf. Softw. Eng., May 2004, pp. 273281.
+[12] D. Binkley, ``Source code analysis: A road map,'' in Proc. Future Softw.
+Eng., May 2007, pp. 104119.
+[13] A. Caracciolo, A. Chis, B. Spasojevic, and M. Lungu, ``Pangea: A work-
+bench for statically analyzing multi-language software corpora,'' in Proc.
+IEEE 14th Int. Working Conf. Source Code Anal. Manipulation (SCAM),
+Sep. 2014, pp. 7176.
+[14] (2007). Centre for Reviews and Dissemination, what are the Cri-
+teria for the Inclusion of Reviews on DARE?. [Online]. Available:
+http://www.york.ac.uk/inst/crd/faq4.htm
+[15] E. J. Chikofsky and J. H. Cross, ``Reverse engineering and design
+recovery: A taxonomy,'' IEEE Softw., vol. 7, no. 1, pp. 1317,
+Jan. 1990.
+[16] A. Cleve, T. Mens, and J. L. Hainaut, ``Data-intensive system evolution,''
+Computer, vol. 43, no. 8, pp. 110112, 2010.
+[17] D. Giffhorn and C. Hammer, ``Precise analysis of java programs using
+joana,'' in Proc. 8th IEEE Int. Working Conf. Sour. Code Anal. Manipu-
+lation, Sep. 2008, pp. 267268.
+[18] J. Ebert, B. Kullbach, V. Riediger, and A. Winter, ``Gupro-generic under-
+standing of programs an overview,'' Electron. Notes Theor. Comput. Sci.,
+vol. 72, no. 2, pp. 4756, 2002.
+[19] E. Flores, A. Barrón-Cedeño, P. Rosso, and L. Moreno, ``Towards the
+detection of cross-language source code reuse,'' in Natural Language
+Processing and Information Systems. Berlin, Germany: Springer, 2011,
+pp. 250253.
+[20] E. Flores, A. Barrón-Cedeño, P. Rosso, and L. Moreno, ``Cross-
+Language Source Code Re-Use Detection Using Latent Semantic
+Analysis,'' J. Univ. Comput. Sci., vol. 21, no. 13, pp. 17081725,
+2015.
+[21] G. CanforaHarman and M. Di Penta, ``New frontiers of reverse engineer-
+ing,'' in Proc. Future Softw. Eng., May 2007, pp. 326341.
+[22] G. A. Di Lucca et al., ``WARE: A tool for the reverse engineering of Web
+applications,'' in Proc. 6th Eur. Conf. Softw. Maintenance Reeng., 2002,
+pp. 241250.
+[23] M. Harman, ``Why source code analysis and manipulation will always be
+important,'' in Proc. SCAM, 2010, pp. 719.
+[24] M. Hashimoto and A. Mori, ``Diff/TS: A tool for ne-grained structural
+change analysis,'' in Proc. 15th Working Conf. Reverse Eng. (WCRE),
+Oct. 2008, pp. 279288.
+11334 VOLUME 5, 2017
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+[25] B. Hugo, J. Cabot, F. Jouault, and F. Madiot, ``MoDisco: A generic and
+extensible framework for model driven reverse engineering,'' in Proc.
+IEEE/ACM Int. Conf. Autom. Softw. Eng., Sep. 2010, pp. 173174.
+[26] M. Janardan, K. M. Annervaz, V. Kaulgud, S. Sengupta, and G. Titus,
+``Software clustering: Unifying syntactic and semantic features,'' in Proc.
+19th Working Conf. Reverse Eng. (WCRE), Oct. 2012, pp. 113122.
+[27] A. Janes, D. Piatov, A. Sillitti, and G. Succi, ``How to calculate soft-
+ware metrics for multiple languages using open source parsers,'' in Open
+Source Software: Quality Verication. Berlin, Germany: Springer, 2013,
+pp. 264270.
+[28] N. Jovanovic, C. Kruegel, and E. Kirda, ``Pixy: A static analysis tool for
+detecting Web application vulnerabilities,'' in Proc. IEEE Symp. Secur.
+Privacy, May 2006, p. 6.
+[29] L. C. Kats and E. Visser, ``Encapsulating software platform logic by
+aspect-oriented programming: A case study in using aspects for language
+portability,'' in Proc. 10th IEEE Working Conf. Sour. Code Anal. Manipu-
+lation (SCAM), Sep. 2010, pp. 147156.
+[30] B. Kullbach, A. Winter, P. Dahm, and J. Ebert, ``Program comprehension
+in multi-language systems,'' in Proc. 15th Working Conf. Reverse Eng.,
+Oct. 1998, pp. 135143.
+[31] S. Lehnert, Q. Farooq, and M. Riebisch, ``Rule-based impact analysis
+for heterogeneous software artifacts,'' in Proc. 17th Eur. Conf. Softw.
+Maintenance Reeng. (CSMR), Mar. 2013, pp. 209218.
+[32] P. Linos, W. Lucas, S. Myers, and E. Maier, ``A metrics tool for multi-
+language software,'' in Proc. 11th IASTED Int. Conf. Softw. Eng. Appl.,
+Nov. 2007, pp. 324329.
+[33] L. Jiang, Z. Zhang, and Z. Zhao, ``AST based JA V A software evolu-
+tion analysis,'' in Proc. Web Inf. Syst. Appl. Conf. (WISA), Nov. 2013,
+pp. 180183.
+[34] A. Marchetto, P. Tonella, and F. Ricca, ``ReAjax: A reverse engineering
+tool for Ajax Web applications,'' IET Softw., vol. 6, no. 1, pp. 3349, 2012.
+[35] C. Marinescu and I. Jurca, ``A meta-model for enterprise applications,'' in
+Proc. 8th Int. Symp. Symbolic Numer. Algorithms Sci. Comput. (SYNASC),
+Sep. 2006, pp. 187194.
+[36] P. Mayer and A. Schroeder, ``Cross-language code analysis and refactor-
+ing,'' in Proc. IEEE 12th Int. Working Conf. Sour. Code Anal. Manipula-
+tion (SCAM), Sep. 2012, pp. 94103.
+[37] P. Mayer and A. Schroeder, ``Automated multi-language artifact binding
+and rename refactoring between Java and DSLs used by Java frameworks,''
+inECOOP Object-Oriented Programming . Berlin, Germany: Springer,
+2014, pp. 437462.
+[38] P. Mayer and A. Schroeder, ``Towards automated cross-language refac-
+toring between Java and DSLs used by Java frameworks,'' in Proc. ACM
+Workshop Refactoring Tools, Oct. 2013, pp. 58.
+[39] J. Misra, K. M. Annervaz, V. Kaulgud, S. Sengupta, and G. Titus, ``Soft-
+ware clustering: Unifying syntactic and semantic features,'' in Proc. 19th
+Working Conf. Reverse Eng. (WCRE), 2012, pp. 113122.
+[40] MoDISCO Eclipse. [Online]. Available: http://www.eclipse.org/MoDisco/
+[41] T. Muhammad, M. F. Zibran, Y. Yamamoto, and C. K. Roy, ``Near-
+miss clone patterns in Web applications: An empirical study with indus-
+trial systems,'' in Proc. 26th Annu. IEEE Can. Conf. Elect. Comput.
+Eng. (CCECE), May 2013, pp. 16.
+[42] P. Klint, T. van Der Storm, and J. Vinju, ``Rascal: A domain specic
+language for source code analysis and manipulation,'' in Proc. 9th IEEE
+Int. Working Conf. Sour. Code Anal. Manipulation (SCAM), Sep. 2009,
+pp. 168177.
+[43] M. Pautasso, ``Ten simple rules for writing a literature review,'' PLoS
+Comput. Biol., vol. 9, no. 7, p. e1003149, 2013.
+[44] F. Perin, T. Girba, and O. Nierstrasz, ``Recovery and analysis of transaction
+scope from scattered information in Java enterprise applications,'' in Proc.
+IEEE Int. Conf. Softw. Maintenance (ICSM), Sep. 2010, pp. 110.
+[45] F. Perin, ``MooseJEE: A moose extension to enable the assessment of
+JEAs,'' in Proc. ICSM, Sep. 2010, pp. 14.
+[46] R. H. Pfeiffer and A. Wasowski, ``Taming the confusion of languages,''
+inModelling Foundations and Applications. Berlin, Germany: Springer,
+2011, pp. 312328.
+[47] R. H. Pfeiffer and A. Wasowski, ``The design space of multi-language
+development environments,'' in Proc. Softw. Syst. Modeling , 2014,
+pp. 129.
+[48] R. H. Pfeiffer and A. Wasowski, ``Texmo: A multi-language develop-
+ment environment,'' in Modelling Foundations and Applications . Berlin,
+Germany: Springer, 2012, pp. 178193.[49] R. H. Pfeiffer, J. Reimann, and A. Wasowski, ``Language-Independent
+Traceability with Lässig,'' in Modelling Foundations and Applications.
+Berlin, Germany: Springer, 2014, pp. 148163.
+[50] M. Philip and A. Bauer, ``An empirical analysis of the utilization of
+multiple programming languages in open source projects,'' in Proc. 19th
+Int. Conf. Eval. Assessment Softw. Eng., Apr. 2015, p. 4.
+[51] T. Polychniatis, J. Hage, S. Jansen, E. Bouwers, and J. Visser, ``Detecting
+cross-language dependencies generically,'' in Proc. 17th Eur. Conf. Softw.
+Maintenance Reeng. (CSMR), 2013, pp. 349352.
+[52] S. Roubtsov, A. Serebrenik, A. Mazoyer, M. G. van den Brand, and
+E. Roubtsova, ``I2SD: Reverse engineering sequence diagrams from enter-
+prise Java beans with interceptors,'' IET Softw., vol. 7, no. 3, pp. 150166,
+2013.
+[53] H. Schink, M. Kuhlemann, G. Saake, and R. Lämmel, ``Hurdles in multi-
+language refactoring of hibernate applications,'' in Proc. ICSOFT, 2011,
+pp. 129134.
+[54] H. Schink, ``SQL-schema-comparer: Support of multi-language refactor-
+ing with relational databases,'' in Proc. IEEE 13th Int. Working Conf. Sour.
+Code Anal. Manipulation (SCAM), Sep. 2013, pp. 173178.
+[55] E. Sebastian, T. Rendel, C. Kästner, and K. Ostermann, ``SugarJ: Library-
+based syntactic language extensibility,'' ACM SIGPLAN Notices,, vol. 46,
+no. 10, pp. 391406, Oct. 2011.
+[56] D. Strein, H. Kratz, and W. Lowe, ``Cross-language program analysis and
+refactoring,'' in Proc. 6th IEEE Int. Workshop Sour. Code Anal. Manipu-
+lation (SCAM), Sep. 2006, pp. 207216.
+[57] N. Synytskyy, J. R. Cordy, and T. R. Dean, ``Robust multilingual parsing
+using island grammars,'' in Proc. Conf. Centre Adv. Stud. Collaborative
+Res., 2003, pp. 266278.
+[58] A. Terceiro et al., ``Analizo: An extensible multi-language source code
+analysis and visualization toolkit,'' in Proc. Brazilian Conf. Softw., Theory
+Practice, Tools Session), Jan. 2010, p. 107.
+[59] S. Tichelaar, S. Ducasse, S. Demeyer, and O. Nierstrasz, ``A meta-model
+for language-independent refactoring,'' in Proc. Int. Symp. Principles
+Softw. Evol., 2000, pp. 154164.
+[60] P. Mayer and A. Schroeder, ``Patterns of cross-language linking in
+Java frameworks,'' in Proc. IEEE 21st Int. Conf. Program Comprehen-
+sion (ICPC), May 2013, pp. 113122.
+[61] F. Tomassetti, A. Vetró, M. Torchiano, M. Voelter, and B. Kolb, ``A
+model-based approach to language integration,'' in Proc. 5th Int. Workshop
+Modeling Softw. Eng., May 2013, pp. 7681.
+[62] P. Tonella and F. Ricca, ``Dynamic model extraction and statistical analysis
+of Web applications: Follow-up after 6 years,'' in Proc. 10th Int. Symp. Web
+Site Evol. (WSE), Oct. 2008, pp. 310.
+[63] T. van der Storm and J. J. Vinju, ``Towards multilingual programming
+environments,'' Sci. Comput. Program., vol. 97, pp. 143149, Jan. 2015.
+[64] J. K. van Dam and V. Zaytsev, ``Software language identication with
+natural language classiers,'' in Proc. IEEE 23rd Int. Conf. Softw. Anal.,
+Evol. Reeng. (SANER), Mar. 2016, pp. 624628.
+[65] J. K. van Dam, ``Identifying source code programming languages through
+natural language processing,'' M.S. thesis, Faculty Sci., Math. Inform.,
+Univ. Amsterdam, Amsterdam, The Netherlands, 2016.
+[66] X. Xia, D. Lo, X. Wang, C. Zhang, and X. Wang, ``Cross-language bug
+localization,'' in Proc. 22nd Int. Conf. Program Comprehension, Jun. 2014,
+pp. 275278.
+[67] A. R. Yazdanshenas and L. Moonen, ``Crossing the boundaries while
+analyzing heterogeneous component-based software systems,'' in Proc.
+27th IEEE Int. Conf. Softw. Maintenance (ICSM), Sep. 2011, pp. 193202.
+[68] C. Yohann and G. Candea, ``Deprogramming large software systems,''
+inProc. Workshop Hot Topics Syst. Dependability (HotDep), Dec. 2008,
+paper DSLAB-CONF-2008-005.
+ZAIGHAM MUSHTAQ received the M.S. degree
+in computer science from the COMSATS Insti-
+tute of Information Technology, Lahore, in 2010,
+where he is currently pursuing the Ph.D. degree
+in computer science. He was involved in software
+process improvement and semantic Web-based
+SQL statements. He is involved in design recov-
+ery of multilingual applications through recogni-
+tion of J2EE Pattern. His active research areas
+include source code analysis especially cross lan-
+guage dependence analysis, program comprehension, and source code
+documentation.
+VOLUME 5, 2017 11335
+Z. Mushtaq et al.: Multilingual Source Code Analysis: A Systematic Literature Review
+GHULAM RASOOL received the M.Sc. degree in
+computer science from BZU, Multan, Pakistan, in
+1998, the M.S.C.S. degree from the University of
+Lahore, Pakistan, in 2008, and the Ph.D. degree in
+reverse engineering from the Technical University
+of Ilmenau, Germany, in 2011. In 2006, he joined
+the University of Lahore. He has teaching and
+research experience of 15 years at national and
+international levels. He is currently an Associate
+Professor with the COMSATS Institute of Infor-
+mation Technology, Lahore, Pakistan. His research interests include reverse
+engineering, design pattern recovery, program comprehension, and source
+code analysis.
+BALAWAL SHEHZAD is currently pursuing the
+M.S. degree with the COMSATS Institute of Infor-
+mation Technology, Lahore. His research interests
+are source code analysis, program comprehension,
+and design pattern detection.
+11336 VOLUME 5, 2017
