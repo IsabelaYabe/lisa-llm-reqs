@@ -639,20 +639,17 @@ if __name__ == "__main__":
 
     start_time = time.time()
     
-    url_ieee_1 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&highlight=true&returnType=SEARCH&matchPubs=true&pageNumber=1&ranges=2020_2025_Year&returnFacets=ALL"
-    url_ieee_2 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:gile%20requirements)%20AND%20(%22Full%20Text%20.AND.%20Metadata%22:usage%20scenario)%20OR%20(%22Full%20Text%20.AND.%20Metadata%22:user%20stories)%20AND%20(%22Abstract%22:language%20models)%20AND%20(%22All%20Metadata%22:elicitation)&ranges=2020_2025_Year"
-    url_ieee_3 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:requirements%20elicitation)%20AND%20(%22All%20Metadata%22:language%20model)%20AND%20(%22Abstract%22:agile)&ranges=2020_2025_Year"
-    url_ieee_4 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Full%20Text%20.AND.%20Metadata%22:requirements%20elicitation)%20AND%20(%22Abstract%22:language%20model)%20AND%20(%22Abstract%22:requirements%20generation)&ranges=2022_2025_Year"
+    url_ieee_1 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:source%20code%20analysis)%20AND%20(%22Abstract%22:language%20models)%20AND%20(%22Abstract%22:reverse%20engineering)"
     
-    #with IEEESources() as ieee:
-        #try:    
-        #    research_ieee_1 = ieee.get_all_researches(url_ieee_1)
-        #    with open(os.path.join("webscraping", "data","ieee_research_data_1.pkl"), "wb") as file:
-        #        pickle.dump(research_ieee_1, file)    
-        #    logger.debug(f"Pesquisa IEEE 1 concluída e salva em 'webscraping/data/ieee_research_data_1.pkl'")
-        #except Exception:
-        #    logger.error(f"Erro ao processar a pesquisa IEEE 1")
-        #    
+    with IEEESources() as ieee:
+        try:    
+            research_ieee_1 = ieee.get_all_researches(url_ieee_1)
+            with open(os.path.join("webscraping", "data","ieee_research_data_1.pkl"), "wb") as file:
+                pickle.dump(research_ieee_1, file)    
+            logger.debug(f"Pesquisa IEEE 1 concluída e salva em 'webscraping/data/ieee_research_data_1.pkl'")
+        except Exception:
+            logger.error(f"Erro ao processar a pesquisa IEEE 1")
+            
         #try:    
         #    research_ieee_2 = ieee.get_all_researches(url_ieee_2)
         #    with open(os.path.join("webscraping", "data","ieee_research_data_2.pkl"), "wb") as file:
@@ -677,17 +674,16 @@ if __name__ == "__main__":
         #except Exception:
         #    logger.error(f"Erro ao processar a pesquisa IEEE 4")
             
-    url_acm_1 = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=all&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=agile&AfterMonth=5&AfterYear=2020&BeforeMonth=5&BeforeYear=2025"
-    url_acm_2 = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=AllField&text1=requirements+elicitation&field2=Abstract&text2=language+model&field3=Abstract&text3=requirements+generation&field4=Fulltext&text4=user+stories&field5=Fulltext&text5=user+story&field6=Fulltext&text6=agile&AfterMonth=1&AfterYear=2022&BeforeMonth=5&BeforeYear=2025"
+    url_acm_1 = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=Abstract&text1=+source+code+analysis&field2=AllField&text2=language+models&field3=Abstract&text3=reverse+engineering&AfterMonth=1&AfterYear=2022&BeforeMonth=6&BeforeYear=2025"
     
-    #with ACMSources() as acm:
-    #    try:
-    #        research_acm_1 = acm.get_all_researches(url_acm_1)
-    #        with open(os.path.join("webscraping", "data","acm_research_data_1.pkl"), "wb") as file:
-    #            pickle.dump(research_acm_1, file)
-    #        logger.debug(f"Pesquisa ACM 1 concluída e salva em 'webscraping/data/acm_research_data_1.pkl'")
-    #    except Exception:
-    #        logger.error(f"Erro ao processar a pesquisa ACM 1")
+    with ACMSources() as acm:
+        try:
+            research_acm_1 = acm.get_all_researches(url_acm_1)
+            with open(os.path.join("webscraping", "data","acm_research_data_1.pkl"), "wb") as file:
+                pickle.dump(research_acm_1, file)
+            logger.debug(f"Pesquisa ACM 1 concluída e salva em 'webscraping/data/acm_research_data_1.pkl'")
+        except Exception:
+            logger.error(f"Erro ao processar a pesquisa ACM 1")
     #    
     #    try:
     #        research_acm_2 = acm.get_all_researches(url_acm_2)
