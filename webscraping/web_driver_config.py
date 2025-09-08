@@ -4,17 +4,15 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.options import Options 
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-from typing import List, Optional
+from typing import Optional
 from lisa.sub_lisa.logger import logger
 import pickle
 import os
-
+from urllib.parse import urlparse
 from dataclasses import dataclass, field 
-from typing import List
 
 @dataclass
 class ResearchPaper:
@@ -23,8 +21,8 @@ class ResearchPaper:
     abstract: Optional[str]  
     DOI: Optional[str]
     source_url: str
-    authors: Optional[List[str]] = field(default_factory=list)
-    keywords: Optional[List[str]] = field(default_factory=list)
+    authors: Optional[list[str]] = field(default_factory=list)
+    keywords: Optional[list[str]] = field(default_factory=list)
     
 @dataclass
 class Research:
@@ -33,9 +31,9 @@ class Research:
     years: str 
     publisher: str 
     url: str
-    content_type: List[str] = field(default_factory=list) 
-    papers_urls: List[str] = field(default_factory=list) 
-    failed_urls: List[str] = field(default_factory=list)
+    content_type: list[str] = field(default_factory=list) 
+    papers_urls: list[str] = field(default_factory=list) 
+    failed_urls: list[str] = field(default_factory=list)
     papers: dict = field(default_factory=dict)
     incomplete_papers: dict = field(default_factory=dict) 
 
@@ -134,12 +132,14 @@ class IEEESources(WebDriverConfig):
     def __research_datas(self):
         xpath = "//div[@class='Dashboard-section Dashboard-section-gray text-base-md-lh']"
         div = self.driver.find_elements(By.XPATH, xpath)
+        #logger.debug(f"Div: {div}")
         
         if len(div) != 1:
             raise ValueError(f"Expected exactly 1 matching div, but found {len(div)}.")
         div = div[0]
         
-        split_text = div.text.split("\n")
+        #split_text = div.text.split("\n")
+        logger.debug(f"Text in div: {split_text}")
         num_of_results_and_keywords = split_text[0].split(" ")
         years = split_text[1].split(" ")
         content_type = split_text[2:]
@@ -341,7 +341,11 @@ class IEEESources(WebDriverConfig):
     def get_all_researches(self, url, max_workers=None): 
         self.load_url(url, wait_xpath="//div[@class='personal-login-header']")
         research_datas = self.__research_datas() 
-        num_researches = research_datas["num_results"] 
+        num_researches = research_datas["num_results"]
+        if num_researches == 0:
+            logger.warning(f"There ins't any results for the url: {url}") 
+            return None
+        
         papers_ids = self.__all_searches_ids(num_researches) 
         
         if max_workers is None:
@@ -598,6 +602,10 @@ class ACMSources(WebDriverConfig):
         self.load_url(url, wait_xpath="//div[@class='pull-right search-showing-results']")
         research_datas = self.__research_datas()
         num_researches = research_datas["num_results"]
+        if num_researches == 0:
+            logger.warning(f"There ins't any results for the url: {url}") 
+            return None
+        
         papers_ids = self.__all_searches_ids(num_researches)
 
         if max_workers is None:
@@ -633,65 +641,3 @@ class ACMSources(WebDriverConfig):
                 logger.warning(f"Failed to parse: {fail}")
         
         return research
-    
-if __name__ == "__main__":
-    import time
-
-    start_time = time.time()
-    
-    url_ieee_1 = "https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&newsearch=true&matchBoolean=true&queryText=(%22Abstract%22:source%20code%20analysis)%20AND%20(%22Abstract%22:language%20models)%20AND%20(%22Abstract%22:reverse%20engineering)"
-    
-    with IEEESources() as ieee:
-        try:    
-            research_ieee_1 = ieee.get_all_researches(url_ieee_1)
-            with open(os.path.join("webscraping", "data","ieee_research_data_1.pkl"), "wb") as file:
-                pickle.dump(research_ieee_1, file)    
-            logger.debug(f"Pesquisa IEEE 1 concluída e salva em 'webscraping/data/ieee_research_data_1.pkl'")
-        except Exception:
-            logger.error(f"Erro ao processar a pesquisa IEEE 1")
-            
-        #try:    
-        #    research_ieee_2 = ieee.get_all_researches(url_ieee_2)
-        #    with open(os.path.join("webscraping", "data","ieee_research_data_2.pkl"), "wb") as file:
-        #        pickle.dump(research_ieee_2, file)   
-        #    logger.debug(f"Pesquisa IEEE 2 concluída e salva em 'webscraping/data/ieee_research_data_2.pkl'")
-        #except Exception:
-        #    logger.error(f"Erro ao processar a pesquisa IEEE 2")
-        #    
-        #try:    
-        #    research_ieee_3 = ieee.get_all_researches(url_ieee_3)
-        #    with open(os.path.join("webscraping", "data","ieee_research_data_3.pkl"), "wb") as file:
-        #        pickle.dump(research_ieee_3, file)
-        #    logger.debug(f"Pesquisa IEEE 3 concluída e salva em 'webscraping/data/ieee_research_data_3.pkl'")
-        #except Exception:
-        #    logger.error(f"Erro ao processar a pesquisa IEEE 3")
-        #
-        #try:
-        #    research_ieee_4 = ieee.get_all_researches(url_ieee_4)
-        #    with open(os.path.join("webscraping", "data","ieee_research_data_4.pkl"), "wb") as file:
-        #        pickle.dump(research_ieee_4, file)
-        #    logger.debug(f"Pesquisa IEEE 4 concluída e salva em 'webscraping/data/ieee_research_data_4.pkl'")
-        #except Exception:
-        #    logger.error(f"Erro ao processar a pesquisa IEEE 4")
-            
-    url_acm_1 = "https://dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=Abstract&text1=+source+code+analysis&field2=AllField&text2=language+models&field3=Abstract&text3=reverse+engineering&AfterMonth=1&AfterYear=2022&BeforeMonth=6&BeforeYear=2025"
-    
-    with ACMSources() as acm:
-        try:
-            research_acm_1 = acm.get_all_researches(url_acm_1)
-            with open(os.path.join("webscraping", "data","acm_research_data_1.pkl"), "wb") as file:
-                pickle.dump(research_acm_1, file)
-            logger.debug(f"Pesquisa ACM 1 concluída e salva em 'webscraping/data/acm_research_data_1.pkl'")
-        except Exception:
-            logger.error(f"Erro ao processar a pesquisa ACM 1")
-    #    
-    #    try:
-    #        research_acm_2 = acm.get_all_researches(url_acm_2)
-    #        with open(os.path.join("webscraping", "data","acm_research_data_2.pkl"), "wb") as file:
-    #            pickle.dump(research_acm_2, file)
-    #        logger.debug(f"Pesquisa ACM 2 concluída e salva em 'webscraping/data/acm_research_data_2.pkl'")
-    #    except Exception:
-    #        logger.error(f"Erro ao processar a pesquisa ACM 2")
-            
-    elapsed_time = time.time() - start_time
-    logger.debug(f"Tempo total de execução: {elapsed_time:.2f} segundos")
