@@ -2,16 +2,15 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.options import Options 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from typing import Optional
 from lisa.sub_lisa.logger import logger
-import pickle
+import time
 import os
-from urllib.parse import urlparse
+#from urllib.parse import urlparse
 from dataclasses import dataclass, field 
 
 @dataclass
@@ -138,7 +137,7 @@ class IEEESources(WebDriverConfig):
             raise ValueError(f"Expected exactly 1 matching div, but found {len(div)}.")
         div = div[0]
         
-        #split_text = div.text.split("\n")
+        split_text = div.text.split("\n")
         logger.debug(f"Text in div: {split_text}")
         num_of_results_and_keywords = split_text[0].split(" ")
         years = split_text[1].split(" ")
@@ -219,6 +218,7 @@ class IEEESources(WebDriverConfig):
         elif "Conference" in date_text:
             date = div_date.text.replace("Date of Conference: ", "")
         else:
+            date = None
             logger.debug(date_text)
         return date
         
@@ -494,9 +494,9 @@ class ACMSources(WebDriverConfig):
         
         return date
         
-    def __paper_doi(self):
-        self.load_url("https://dl.acm.org/doi/10.1145/3691620.3695591")
-        self.__allow_all_cookies()
+    #def __paper_doi(self):
+    #    self.load_url("https://dl.acm.org/doi/10.1145/3691620.3695591")
+    #    self.__allow_all_cookies()
     
     def __paper_keywords(self):
         section_terms = self.driver.find_element(By.ID, "sec-terms")
@@ -516,7 +516,7 @@ class ACMSources(WebDriverConfig):
                 
     def __research_paper(self, id): 
         source_url = f"https://dl.acm.org/doi/{id}"
-        self.restart_driver
+        self.restart_driver()
         self.load_url(source_url)
         self.__allow_all_cookies()
 
