@@ -146,7 +146,7 @@ if __name__ == "__main__":
     abstract_oo = (
         "Abstract", [
             "object-oriented","object oriented","OO","OOP",
-            "object-oriented software","class-based","inheritance","polymorphism",
+            "object-oriented software","class-based","inheritance","polymorphism"
         ]
     )
     
