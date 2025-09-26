@@ -1,3 +1,0 @@
-D	WARC Tools Phase III Functional Requirements Speci!cation - adoption of the WARC file format for storing web archives
-1	Specification
-2	Migration Tool

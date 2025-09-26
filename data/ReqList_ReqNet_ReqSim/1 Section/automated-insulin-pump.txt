@@ -1,2 +1,0 @@
-D	specification of the control software for an automated insulin pump
-3	Automated Insulin Pump

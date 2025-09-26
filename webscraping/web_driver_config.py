@@ -12,6 +12,7 @@ import time
 import os
 #from urllib.parse import urlparse
 from dataclasses import dataclass, field 
+from typing import Any, Callable, Tuple
 
 @dataclass
 class ResearchPaper:
@@ -22,7 +23,20 @@ class ResearchPaper:
     source_url: str
     authors: Optional[list[str]] = field(default_factory=list)
     keywords: Optional[list[str]] = field(default_factory=list)
-    
+def _safe_parse_item(self, parser: Callable[..., Any] , *args: Any, default: Any = None, field_name: str = "field", doc_id_for_log: Optional[str] = None) -> Tuple[Any, bool]:
+        """
+        Safely call a parsing function, logging any exceptions and returning a default value if needed.
+        Returns a tuple of (parsed_value, success_flag).
+        """
+        try:
+            result = parser(*args)
+            if result is None:
+                logger.warning(f"Parsing returned None for {field_name}" + (f" in doc ID={doc_id_for_log}" if doc_id_for_log else ""))
+                return default, False
+            return result, True
+        except Exception as e:
+            logger.warning(f"Error parsing {field_name}" + (f" in doc ID={doc_id_for_log}" if doc_id_for_log else "") + f": {e}", exc_info=True)
+            return default, False
 @dataclass
 class Research:
     num_results: int 
@@ -226,7 +240,6 @@ class IEEESources(WebDriverConfig):
         xpath = "//div[@class='u-pb-1 stats-document-abstract-doi']"
         div_doi = self.driver.find_element(By.XPATH, xpath)
         doi = div_doi.text.replace("DOI: ", "")
-
         return doi
     
     def __paper_keywords(self):
@@ -376,7 +389,7 @@ class IEEESources(WebDriverConfig):
         )        
         
         if failed_urls:
-            logger.warning(f"Total URLs with error: {len(failed_urls)}")
+            logger.warning(f"Total URLs with error: {len(failed_urls)} | {url}")
             for fail in failed_urls:
                 logger.warning(f"Failed to parse: {fail}")
                 

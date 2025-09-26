@@ -190,15 +190,15 @@ if __name__ == "__main__":
     )
     
     groups_sets = {
-      "reverse_oo_uml": [abstract_reverse_engineering, abstract_oo, abstract_use_case_uml], # 0/0
-      
-      "reverse_static_uml": [abstract_reverse_engineering, abstract_static_analysis, abstract_use_case_uml], # 7/2
-      
-      "concept_code_static_uml": [abstract_concept_location, abstract_code, abstract_static_analysis, abstract_use_case_uml], # 2/2
-      
-      "reverse_concept_uml": [abstract_reverse_engineering, abstract_concept_location, abstract_use_case_uml], # 0/1
-      
-      "reverse_concept_nlp": [abstract_reverse_engineering, abstract_concept_location, abstract_nlp], # 7/6
+    #   "reverse_oo_uml": [abstract_reverse_engineering, abstract_oo, abstract_use_case_uml], # 0/0
+    #   
+    #   "reverse_static_uml": [abstract_reverse_engineering, abstract_static_analysis, abstract_use_case_uml], # 7/2
+    #   
+    #   "concept_code_static_uml": [abstract_concept_location, abstract_code, abstract_static_analysis, abstract_use_case_uml], # 2/2
+    #   
+    #   "reverse_concept_uml": [abstract_reverse_engineering, abstract_concept_location, abstract_use_case_uml], # 0/1
+    #   
+    #   "reverse_concept_nlp": [abstract_reverse_engineering, abstract_concept_location, abstract_nlp], # 7/6
       
       "reverse_static_nlp": [abstract_reverse_engineering, abstract_static_analysis, abstract_nlp] # 8/7
     }
