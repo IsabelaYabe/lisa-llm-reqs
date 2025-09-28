@@ -1,4 +1,4 @@
-from lisa.sub_lisa.logger import logger
+from logger import logger
 from webscraping.web_driver_config import *
 import pickle
 import os

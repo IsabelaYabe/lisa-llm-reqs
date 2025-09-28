@@ -14,6 +14,7 @@ class ACMSources(BaseSource):
     RESULTS_LIST_1 = "//div[@class='search-result doSearch']//ul[@class='search-result__xsl-body  items-results rlist--inline ']/li"
     RESULTS_LIST_2 = "//div[@class='search-result doSearch']//ul[@class='search-result__xsl-body items-results rlist--inline']/li"
     PAG_NEXT = "//div[@class='search-result doSearch']//nav[@class='pagination']//span//a[@class='pagination__btn--next']"
+    SEARCH_READY_XPATH = "//div[@class='pull-right search-showing-results']"
 
     TITLE = "//div[@class='core-container']/h1"
     AUTHORS = "//div[@class='contributors']//span[@class='authors']//span[@property='author']"
@@ -39,7 +40,7 @@ class ACMSources(BaseSource):
         """
         XPath to wait for search results to load.
         """
-        return "//div[@class='pull-right search-showing-results']"
+        return SEARCH_READY_XPATH
 
     def _parse_search_header(self) -> dict[str, Any]:
         """

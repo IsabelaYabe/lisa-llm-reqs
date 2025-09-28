@@ -3,7 +3,7 @@ from typing import Optional, Any
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
-from lisa.sub_lisa.logger import logger
+from logger import logger
 from .base_source import BaseSource
 
 
@@ -16,7 +16,8 @@ class IEEESources(BaseSource):
     DASHBOARD = "//div[@class='Dashboard-section Dashboard-section-gray text-base-md-lh']"
     RESULTS_LIST = "//xpl-results-list/div[@class='List-results-items']"
     PAG_NEXT = "//div[@class='pagination-bar hide-mobile text-base-md-lh']//button[@class='stats-Pagination_arrow_next_{num}']"
-
+    SEARCH_READY_XPATH = "//div[@class='personal-login-header']"
+    
     TITLE = "//h1[contains(@class, 'document-title')]//span"
     AUTHORS = "//div[contains(@class, 'authors-container')]//span[contains(@class, 'authors-info')]"
     ABSTRACT = "//div[@class='u-mb-1']"
@@ -44,7 +45,7 @@ class IEEESources(BaseSource):
         """
         XPath to wait for search results to load.
         """
-        return "//div[@class='personal-login-header']"
+        return SEARCH_READY_XPATH
 
     def _parse_search_header(self) -> dict[str, Any]:
         """
@@ -109,8 +110,7 @@ class IEEESources(BaseSource):
         parts = (div.text or "").split("\n")
         if len(parts) > 1:
             return parts[1]  
-        else:
-            None
+        return None
 
     def _parse_date(self) -> Optional[str]:
         """

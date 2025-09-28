@@ -1,5 +1,5 @@
 import time
-from lisa.sub_lisa.logger import logger
+from logger import logger
 
 from papers_lab.sources.url_builder import build_search_urls_for_sources
 from papers_lab.sources.orchestrator import SourcesOrchestrator

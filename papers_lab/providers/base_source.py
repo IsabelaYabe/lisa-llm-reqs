@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional, Any, Iterable, Callable, Tuple
 from math import ceil
 
-from lisa.sub_lisa.logger import logger
+from logger import logger
 from .base import WebDriverConfig
 from .models import Research, ResearchPaper
 
@@ -197,5 +197,5 @@ class BaseSource(WebDriverConfig, ABC):
             papers_urls=ids,
             failed_urls=failed,
             papers=papers,
-            incomplete_papers=incomplete,
+            incomplete_pap''ers=incomplete,
         )

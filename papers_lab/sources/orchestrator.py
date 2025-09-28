@@ -4,13 +4,13 @@ from urllib.parse import urlparse
 from typing import Any
 import pickle
 
-from lisa.sub_lisa.logger import logger
+from logger import logger
 from papers_lab.providers import IEEESources, ACMSources
 from papers_lab.io import PapersRepo
 
 def split_urls_by_domain(urls: list[str]) -> tuple[list[str], list[str]]:
     """
-    Split a list of URLs into two lists based on their domain: IEEE and ACM (ignproring others).
+    Split a list of URLs into two lists based on their domain: IEEE and ACM (ignoring others).
     """
     ieee_list, acm_list = [], []
     for url in urls or []:
@@ -59,7 +59,7 @@ class SourcesOrchestrator:
                     file_path = self.repo.save_research(
                         research,
                         root=Path(save_dir) / source_name.lower(),
-                        name=f"{source_name.lower()}_research_{tag}_{i}",
+                        name=f"{source_name.lower()}_research_{tag}_{i}"
                     )
                     saved_files_by_path[str(file_path)] = url
                     

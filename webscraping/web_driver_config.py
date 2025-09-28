@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from typing import Optional
-from lisa.sub_lisa.logger import logger
+from logger import logger
 import time
 import os
 #from urllib.parse import urlparse

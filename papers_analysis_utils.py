@@ -1,42 +1,40 @@
-import os, pickle
-from dataclasses import asdict
+from __future__ import annotations
+
+import os, pickle, math, ast, re, unicodedata
+from dataclasses import asdict, is_dataclass
+from pathlib import Path
+from typing import Callable, Any, Iterable
+
 import pandas as pd
-import ast
-import re
-import unicodedata
-from typing import Callable, Any
+from logger import logger
 
-from lisa.sub_lisa.logger import logger
+def show_df(title: str, df: pd.DataFrame, max_rows: int = 10) -> None:
+    """
+    Print a titled preview of a DataFrame.
+    """    
+    print(f"\n[{title}] ({len(df)} rows)")
+    print(df.head(max_rows))
 
-def _show(title: str, dfx: pd.DataFrame, max_rows: int = 10):
+def normalize_text(s: Any) -> str | None:
     """
-    Print a title and the head of a DataFrame with a maximum number of rows.
-    """
-    print(f"\n[{title}] ({len(dfx)} lines)")
-    print(dfx.head(max_rows))
-
-def _norm_str(s: str) -> str | None:
-    """
-    Normalize a title by lowercasing, stripping whitespace, and removing punctuation.
-    If the input is not a string, it returns an empty string.    
+    Lowercase, NFKC, strip, collapse spaces; remove punctuation. Non-str → None.
     """
     if not isinstance(s, str):
         return None
-
-    s = unicodedata.normalize("NFKC", s)
-        .casefold().strip()
+    s = unicodedata.normalize("NFKC", s).casefold().strip()
     s = re.sub(r"[^\w\s]", " ", s, flags=re.UNICODE)
     s = re.sub(r"\s+", " ", s).strip()
-    return s
+    return s or None
 
-def normalize_str_col(df: pd.DataFrame, col_name: str) -> pd.DataFrame:
+def normalize_col(df: pd.DataFrame, col: str, out: str | None = None, fn: Callable[[Any], Any] = normalize_text) -> pd.DataFrame:
     """
-    Normalize a string column in the DataFrame by applying _norm_str function.
+    Create a normalized column from 'col' using 'fn' (defaults to normalize_text).
     """
-    df[f"{col_name}_norm"] = df[col_name].apply(_norm_str)
+    out = out or f"{col}_norm"
+    df[out] = df[col].apply(fn)
     return df
 
-def check_col(df: pd.DataFrame, col_name: str, 
+def check_col(df: pd.DataFrame, col: str, 
     *, show_rows: bool = True, max_rows: int = 10, 
     normalizer: Callable[[Any], Any] | None = None, 
     return_clean_data: bool = False) 
@@ -52,43 +50,37 @@ def check_col(df: pd.DataFrame, col_name: str,
     """
     dfc = df.copy()
     
-    target_col = col_name
+    target = col
     if normalizer is not None:
-        norm_col = f"{col_name}_norm"
-        dfc[norm_col] = dfc[col_name].apply(normalizer)
-        target_col = norm_col
+        target = f"{col}_norm"
+        dfc[target] = dfc[col].apply(normalizer)
     
-    duplicated_rows = dfc[dfc.duplicated(subset=target_col, keep=False)].sort_values([target_col])
-    df_clean = dfc.drop_duplicates(subset=target_col, keep="first").reset_index(drop=True)
-    papers_without_value = dfc[dfc[target_col].isna()].copy()
+    duplicated_rows = dfc[dfc.duplicated(subset=target, keep=False)].sort_values([target])
+    df_clean = dfc.drop_duplicates(subset=target, keep="first").reset_index(drop=True)
+    missing = dfc[dfc[target].isna()].copy()
 
     summary = {
         "total_rows": len(dfc),
         "duplicated_rows": len(duplicated_rows),
-        "unique_values": dfc[target_col].nunique(dropna=True),
+        "unique_values": dfc[target].nunique(dropna=True),
         "clean_rows": len(df_clean),
-        "without_value": len(papers_without_value),
-        "column_checked": target_col
+        "missing_rows": len(missing),
+        "column_checked": target
     }
-
     print(
-        f"Total: {summary['total_rows']} | Duplicated rows: {summary['duplicated_rows']} | "
-        f"Unique values: {summary['unique_value']} | Clean rows: {summary['clean_rows']} | "
-        f"Papers without value: {summary['without_value'] | Column: {summary['column_checked']}}"
+        f"Total: {summary['total_rows']} | Duplicated: {summary['duplicated_rows']} | "
+        f"Unique values: {summary['unique_values']} | Clean rows: {summary['clean_rows']} | "
+        f"Missing: {summary['missing_rows']} | Column: {summary['column_checked']}"
     )
-
     if show_rows:
-        _show(f"Duplicated by {target_col}", duplicated_rows[[col_name, target_col]], max_rows=max_rows)
-        _show(f"Without value in {target_col}", papers_without_value[[col_name, target_col]], max_rows=max_rows)
+        show_df(f"Duplicated by {target}", dupe[[col] + ([target] if target != col else [])], max_rows)
+        show_df(f"Missing in {target}", missing[[col] + ([target] if target != col else [])], max_rows)
     
-    return df_clean if return_clean_data else None
+    if return_clean:
+        return clean  
+    return None
 
-def check_rows_conflicts(df: pd.DataFrame, col_a: str, col_b: str,
-    *, normalize_a: Callable[[Any], Any] | None = None, 
-    normalize_b: Callable[[Any], Any] | None = None,
-    show_rows: bool = True, max_rows: int = 20,
-    return_data: bool = True
-):
+def check_rows_conflicts(df: pd.DataFrame, col_a: str, col_b: str, *, normalize_a: Callable[[Any], Any] | None = None, normalize_b: Callable[[Any], Any] | None = None, show_rows: bool = True, max_rows: int = 20, return_data: bool = True) -> dict[str, Any] | None:
     """
     Check for conflicts between col_a and col_b in the DataFrame.
     It looks for:
@@ -101,14 +93,11 @@ def check_rows_conflicts(df: pd.DataFrame, col_a: str, col_b: str,
     b = col_b
 
     if normalize_a is not None:
-        a_norm = f"{col_a}_norm"
-        dfc[a_norm] = dfc[col_a].apply(normalize_a)
-        a = a_norm
-    
+        a = f"{col_a}_norm"
+        dfc[a] = dfc[col_a].apply(normalize_a)
     if normalize_b is not None:
-        b_norm = f"{col_b}_norm"
-        dfc[b_norm] = dfc[col_b].apply(normalize_b)
-        b = b_norm
+        b = f"{col_b}_norm"
+        dfc[b] = dfc[col_b].apply(normalize_b)
 
     dup_a = dfc[dfc.duplicated(subset=a, keep=False)]
     same_a_diff_b = dup_a.groupby(a).filter(lambda x: x[b].nunique(dropna=True) > 1).sort_values([a, b])
@@ -134,9 +123,11 @@ def check_rows_conflicts(df: pd.DataFrame, col_a: str, col_b: str,
     )
 
     if show_rows:
-        _show(f"Same {col_a} different {col_b}", same_a_diff_b[[col_a, col_b]], max_rows=max_rows)
-        _show(f"Same {col_b} different {col_a}", same_b_diff_a[[col_b, col_a]], max_rows=max_rows)
-    
+        cols1 = [col_a, col_b] + ([a] if a != col_a else []) + ([b] if b != col_b else [])
+        cols2 = [col_b, col_a] + ([b] if b != col_b else []) + ([a] if a != col_a else [])
+        show_df(f"Same {col_a} with different {col_b}", same_a_diff_b[cols1], max_rows)
+        show_df(f"Same {col_b} with different {col_a}", same_b_diff_a[cols2], max_rows)
+
     result_return = {
         "summary": summary,
         "same_a_diff_b": same_a_diff_b,
@@ -144,7 +135,9 @@ def check_rows_conflicts(df: pd.DataFrame, col_a: str, col_b: str,
         "dataframe": dfc
     }
 
-    return result_return if return_data else None
+    if return_data:
+        return result_return  
+    return None
 
 def _norm(kw: str) -> str | None:
     """
@@ -156,13 +149,19 @@ def _norm(kw: str) -> str | None:
     return None
 
 def normalize_titles(df: pd.DataFrame, title_column: str = "title") -> pd.DataFrame:
-        """
-        Normalize the titles in the DataFrame by stripping whitespace and converting to lowercase.
-        """
-        df[title_column] = df[title_column].apply(_norm)
-        return df
+    """
+    Normalize the titles in the DataFrame by stripping whitespace and converting to lowercase.
+    """
+    df[title_column] = df[title_column].apply(_norm)
+    return df
 
 def extract_researches_results(rot_dir: str | os.PathLike): 
+    """
+    Extract research results from pickled files in the specified directory.
+    Each file in the directory is expected to be a pickled object that can be converted to a dictionary.
+    The function loads each file, converts it to a dictionary using asdict, and appends
+    it to a list of researches.
+    """
     researches = []
     for papers in os.listdir(rot_dir):
         researches_results_path = os.path.join(rot_dir, papers)
@@ -171,47 +170,51 @@ def extract_researches_results(rot_dir: str | os.PathLike):
             researches.append(research)
     return researches
 
-def extract_papers(researches : list[dict]):            
+def extract_papers(researches : list[dict]) -> list[dict]:
+    """ 
+    Extract all papers from a list of research results.
+    Each research result is expected to be a dictionary with a "papers" key containing a dictionary of papers.
+    The function aggregates all papers into a single list and returns it.
+    """            
     papers = []
     for results in researches:
         for paper in results["papers"].values():
             papers.append(paper)
     return papers
 
-def _to_list(x: any) -> list[str] | None:
-    """
-    Convert input into a list of strings.
-    Returns a list of strings in all cases.
-    """
-
-    if x is None or (isinstance(x, float)) and math.isnan(x):
+def to_list(x: Any) -> list[str] | None:
+    """Convert input to list[str]. None/NaN → None; scalar → [str]; list/tuple/set → list[str]."""
+    if x is None or (isinstance(x, float) and math.isnan(x)):
         return None
-    
     if isinstance(x, (list, tuple, set)):
-        return list(x)
-    
+        return [str(e) for e in x]
     if isinstance(x, str):
         s = x.strip()
         if s.startswith("[") and s.endswith("]"):
             try:
                 val = ast.literal_eval(s)
                 if isinstance(val, (list, tuple, set)):
-                    return list(val)
-                else:
-                    logger.warning(f"String does not evaluate to a list-like structure: {s}")
-                    return [s]
+                    return [str(e) for e in val]
+                logger.warning(f"String is bracketed but not list-like: {s!r}")
+                return [s]
             except Exception as e:
-                logger.error(f"Error parsing string to list: {e}")    
+                logger.error(f"Error literal_eval on {s!r}: {e}")
                 return [s]
         return [s]
-    return [x]
+    return [str(x)]
 
-def _norm_token(s: str) -> str:
-    if not isinstance(s, str): return ""
-    tbl = str.maketrans("", "", r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~""")
-    s = unicodedata.normalize("NFKC", s).lower().strip().translate(tbl)
-    s = re.sub(r"\s+", " ", s)
-    return s
+def normalize_keywords_col(df: pd.DataFrame, col: str, out: str | None = None) -> pd.DataFrame:
+    """
+    Ensure 'col' is list-like and create a normalized set-of-tokens column.
+    'out' defaults to f"{col}_normset".
+    """
+    out = out or f"{col}_normset"
+    def _norm_listlike(x: Any) -> set[str]:
+        lst = to_list(x) or []
+        normed = {t for t in (normalize_token(k) for k in lst) if t}
+        return normed
+    df[out] = df[col].apply(_norm_listlike)
+    return df
 
 def _norm_list(lst: list[list[str]]) -> list[set]:
     """
