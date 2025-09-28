@@ -1,3 +1,3 @@
-from .repo import PapersRepo
+from .repo import Storage
 
-__all__ = ["PapersRepo"]
+__all__ = ["Storage"]

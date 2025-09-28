@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 
 
-class PapersRepo:
+class Storage:
     """
     Repositório utilitário para persistir e carregar pesquisas (Research)
     e materializar papers em DataFrame para EDA.
@@ -107,8 +107,8 @@ class PapersRepo:
 
     # --------------------
     # Flatten e DataFrame
-    # --------------------
-    @staticmethod
+    # --------------------²²
+    @staticmethod³
     def _to_dict(obj: Any) -> Dict:
         """
         Converte dataclass -> dict; se já for dict, retorna como está.
@@ -158,6 +158,7 @@ class PapersRepo:
     # --------------------
     # Utilidades para EDA
     # --------------------
+
     @staticmethod
     def dedupe_papers(df: pd.DataFrame, subset: str | list[str] = "DOI", keep: str = "first") -> pd.DataFrame:
         """
@@ -170,7 +171,7 @@ class PapersRepo:
         """
         Validação leve: checa os campos mínimos de uma pesquisa.
         """
-        r = PapersRepo._to_dict(obj)
+        r = Storage._to_dict(obj)
         # campos desejáveis
         has_pubs = "publisher" in r
         has_papers = isinstance(r.get("papers"), (dict,))

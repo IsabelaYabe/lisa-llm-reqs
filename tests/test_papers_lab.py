@@ -3,7 +3,7 @@ from logger import logger
 
 from papers_lab.sources.url_builder import build_search_urls_for_sources
 from papers_lab.sources.orchestrator import SourcesOrchestrator
-from papers_lab.io.repo import PapersRepo
+from papers_lab.io import Storage
 
 # (opcional) se quiser forçar headless nos providers usados pelo orchestrator,
 # ajuste no orchestrator para passar **cfg (headless=True) na construção
@@ -69,8 +69,8 @@ groups_sets = {
 
 def main():
     start_time = time.time()
-    repo = PapersRepo()
-    orch = SourcesOrchestrator(repo) 
+    storage = Storage()
+    orch = SourcesOrchestrator(storage) 
 
     for name, groups in groups_sets.items():
         ieee_url, acm_url = build_search_urls_for_sources(groups, year_range, exclude_noise)

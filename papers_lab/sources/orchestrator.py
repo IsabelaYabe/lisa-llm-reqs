@@ -6,7 +6,7 @@ import pickle
 
 from logger import logger
 from papers_lab.providers import IEEESources, ACMSources
-from papers_lab.io import PapersRepo
+from papers_lab.io import Storage
 
 def split_urls_by_domain(urls: list[str]) -> tuple[list[str], list[str]]:
     """
@@ -30,8 +30,8 @@ class SourcesOrchestrator:
     """
     Orchestrator for fetching research papers from IEEE and ACM sources.
     """
-    def __init__(self, repo: PapersRepo):
-        self.repo = repo
+    def __init__(self, storage: Storage):
+        self.storage = storage
     
     def _fetch_one_source(
         self,
@@ -56,7 +56,7 @@ class SourcesOrchestrator:
             try:
                 research = handler.get_all_researches(url)
                 if research:
-                    file_path = self.repo.save_research(
+                    file_path = self.storage.save_research(
                         research,
                         root=Path(save_dir) / source_name.lower(),
                         name=f"{source_name.lower()}_research_{tag}_{i}"

@@ -49,7 +49,7 @@ def _(obj:Research) -> pd.DataFrame:
         return pd.json_normalize(rows, sep=".")
     return pd.DataFrame()
 
-class PapersRepo:
+class Storage:
     """
     Utility repository for persisting and loading research data (Research)
     and materializing papers into a DataFrame for EDA.

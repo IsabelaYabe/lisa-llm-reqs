@@ -26,7 +26,7 @@ class BaseSource(WebDriverConfig, ABC):
 
     @abstractmethod
     def _parse_search_header(self) -> dict[str, Any]:
-        """
+        """ 
         Parse the search results header to extract metadata like number of results, keywords, and years.
         """
     @abstractmethod
@@ -197,5 +197,5 @@ class BaseSource(WebDriverConfig, ABC):
             papers_urls=ids,
             failed_urls=failed,
             papers=papers,
-            incomplete_pap''ers=incomplete,
+            incomplete_papers=incomplete,
         )
