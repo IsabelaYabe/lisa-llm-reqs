@@ -37,8 +37,7 @@ def normalize_col(df: pd.DataFrame, col: str, out: str | None = None, fn: Callab
 def check_col(df: pd.DataFrame, col: str, 
     *, show_rows: bool = True, max_rows: int = 10, 
     normalizer: Callable[[Any], Any] | None = None, 
-    return_clean_data: bool = False) 
-    -> pd.DataFrame | None:
+    return_clean_data: bool = False) -> pd.DataFrame | None:
     """
     Check consistency of a column in a DataFrame of papers.
     

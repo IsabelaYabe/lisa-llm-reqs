@@ -1,12 +1,19 @@
-from ___future__import annotations
+from ___future__ import annotations
 
 from dataclasses import asdict, is_dataclass
 from functools import singledispatch
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Sequence
+import re
 import pandas as pd
-from papers_lab.models import Research
 
 from logger import logger
+from papers_lab.models import Research
+
+_MONTHS = {
+    "january": 1, "february": 2, "march": 3, "april": 4,
+    "may": 5, "june": 6, "july": 7, "august": 8,
+    "september": 9, "october": 10, "november": 11, "december": 12
+}
 
 def paper_to_dict(p: Any) -> Dict:
     """
@@ -50,12 +57,15 @@ class PapersTransform:
     """
     Normalize research objects to a wide DataFrame (unique by DOI).
     """
-    def to_wide_unique(self, researches: List[Any], *, sep: str = ".") -> pd.DataFrame:
+    def _to_wide_unique(self, researches: List[Any], *, sep: str = ".") -> pd.DataFrame:
         rows: List[Dict] = []
         for r in researches:
             rows.extend(extract_papers(r))
 
-        rows = [p for p in rows if isinstance(p, dict) and p.get("DOI")]
+        if isinstance(p, dict) and p.get("DOI"):
+            for p in rows:
+                rows.append(p)
+
         seen, unique = set(), []
         for p in rows:
             doi = p["DOI"]
@@ -63,3 +73,49 @@ class PapersTransform:
                 seen.add(doi)
                 unique.append(p)
         return pd.json_normalize(unique, sep=sep)
+
+    def _extract_year_month(self, df: pd.DataFrame, date_col: str = "date",year_col: str = "year", month_col: str = "month") -> pd.DataFrame:
+        """
+        Extracts year and month from date columns in the format:
+        - "01 September 2025"
+        - "01-05 July 2024"
+        - "14-17 December 2020"
+
+        Returns a DataFrame with `year` and `month` columns.
+        """
+        dfc = df.copy()
+
+        years: List[int | None] = []
+        months: List[int | None] = []
+        for val in dfc[date_col].fillna(""):
+            text = str(val).strip().lower()
+
+            m_year = re.search(r"(\d{4})$", text)
+            if m_year:
+                year = int(m_year.group(1)) 
+            else:
+                year = None
+
+            m_month = re.search(r"([a-z]+)\s+\d{4}$", text)
+            if m_month:
+                month_name = m_month.group(1).lower()
+                month = _MONTHS.get(month_name, None)
+            else:
+                month = None
+
+            years.append(year)
+            months.append(month)
+
+        dfc[year_col] = years
+        dfc[month_col] = months
+        return dfc
+
+    def transform(self,researches: List[Any],*,sep: str = ".",date_col: str = "date",year_col: str = "year",month_col: str = "month") -> pd.DataFrame:
+        """
+        Transforms a list of research objects into a unique DataFrame by DOI,
+        and adds `year` and `month` columns extracted from the date column.
+        """
+        df = self._to_wide_unique(researches, sep=sep)
+        if date_col in df.columns:
+            df = self._extract_year_month(df, date_col, year_col, month_col)
+        return df
