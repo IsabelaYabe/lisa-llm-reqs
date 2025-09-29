@@ -1,3 +1,3 @@
-from .repo import Storage
+from .storage import Storage
 
 __all__ = ["Storage"]

@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Optional, Any
+
+from typing import Optional, Any, List, Dict
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -45,9 +46,9 @@ class IEEESources(BaseSource):
         """
         XPath to wait for search results to load.
         """
-        return SEARCH_READY_XPATH
+        return self.SEARCH_READY_XPATH
 
-    def _parse_search_header(self) -> dict[str, Any]:
+    def _parse_search_header(self) -> Dict[str, Any]:
         """
         Parse the search results header to extract number of results, keywords, and years.
         """
@@ -68,7 +69,7 @@ class IEEESources(BaseSource):
             "content_type": " ".join(content),
         }
 
-    def _collect_search_ids_one_page(self) -> list[str]:
+    def _collect_search_ids_one_page(self) -> List[str]:
         """
         Collect document IDs (DOI suffixes) from the current search results page.
         """
@@ -89,11 +90,11 @@ class IEEESources(BaseSource):
         span_title = self.wait.until(EC.presence_of_element_located((By.XPATH, self.TITLE)))
         return span_title.text
 
-    def _parse_authors(self) -> list[str]:
+    def _parse_authors(self) -> List[str]:
         """
         Parse the list of authors of the current paper.
         """
-        authors: list[str] = []
+        authors: List[str] = []
         for el in self.driver.find_elements(By.XPATH, self.AUTHORS):
             author = (el.text or "").strip()
             if author.endswith(";"):
@@ -136,20 +137,20 @@ class IEEESources(BaseSource):
             logger.warning(f"Could not parse DOI: {e}")
             return None
 
-    def _parse_keywords(self) -> list[str]:
+    def _parse_keywords(self) -> List[str]:
         """
         Parse the list of keywords of the current paper.
         """
         self.wait_click(self.KEYWORDS_BTN)
         groups = self.wait_all(self.KEYWORDS_LIST)
 
-        kws: list[str] = []
+        kws: List[str] = []
         for g in groups:
             txt = (g.text or "").strip()
             if txt:
                 kws += txt.split("\n,\n")
     
-        return list(dict.fromkeys(kws))
+        return list(Dict.fromkeys(kws))
     
     def _paper_url(self, doc_id: str) -> str:
         """

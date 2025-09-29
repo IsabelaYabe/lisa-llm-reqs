@@ -1,7 +1,8 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Optional, Any, Iterable, Callable, Tuple
+from typing import Optional, Any, Iterable, Callable, Tuple, List, Dict
 from math import ceil
 
 from logger import logger
@@ -25,12 +26,12 @@ class BaseSource(WebDriverConfig, ABC):
         """
 
     @abstractmethod
-    def _parse_search_header(self) -> dict[str, Any]:
+    def _parse_search_header(self) -> Dict[str, Any]:
         """ 
         Parse the search results header to extract metadata like number of results, keywords, and years.
         """
     @abstractmethod
-    def _collect_search_ids_one_page(self) -> list[str]: 
+    def _collect_search_ids_one_page(self) -> List[str]: 
         """
         Collect document IDs (e.g., DOI suffixes) from the current search results page.
         """
@@ -46,7 +47,7 @@ class BaseSource(WebDriverConfig, ABC):
         Parse the title of the current paper.
         """
     @abstractmethod
-    def _parse_authors(self) -> list[str]: 
+    def _parse_authors(self) -> List[str]: 
         """
         Parse the list of authors of the current paper.
         """
@@ -66,7 +67,7 @@ class BaseSource(WebDriverConfig, ABC):
         Parse the DOI of the current paper, optionally using the document ID.
         """
     @abstractmethod
-    def _parse_keywords(self) -> list[str]: 
+    def _parse_keywords(self) -> List[str]: 
         """
         Parse the list of keywords of the current paper.
         """
@@ -91,13 +92,13 @@ class BaseSource(WebDriverConfig, ABC):
             logger.warning(f"{self.publisher}:{doc_id_for_log or ''} Error parsing {field_name}: {e}", exc_info=True)
             return default, False
             
-    def _collect_all_ids(self, total: int | Iterable[Any]) -> list[str]:
+    def _collect_all_ids(self, total: int | Iterable[Any]) -> List[str]:
         """
         Collect all paper IDs from the search results, handling pagination as needed.
         """
         if not isinstance(total, int):
-            total = len(list(total))
-        ids: list[str] = []
+            total = len(List(total))
+        ids: List[str] = []
         pages = total // self.show_limit
         for i in range(pages):
             ids += self._collect_search_ids_one_page()
@@ -115,13 +116,13 @@ class BaseSource(WebDriverConfig, ABC):
         for i in range(0, len(data), size):
             yield data[i:i + size]
 
-    def _fetch_many(self, ids: list[str]) -> tuple[dict[str, ResearchPaper], dict[str, ResearchPaper], list[str]]:
+    def _fetch_many(self, ids: List[str]) -> tuple[Dict[str, ResearchPaper], Dict[str, ResearchPaper], List[str]]:
         """
         Fetch and parse multiple papers given their IDs, returning dictionaries of successful and incomplete papers, and a list of failed URLs.
         """
-        papers: dict[str, ResearchPaper] = {}
-        incomplete: dict[str, ResearchPaper] = {}
-        failed: list[str] = []
+        papers: Dict[str, ResearchPaper] = {}
+        incomplete: Dict[str, ResearchPaper] = {}
+        failed: List[str] = []
 
         with self.__class__(headless=self._headless, wait_time=self._wait_time, show_limit=self.show_limit) as tmp:
             for doc_id in ids:
@@ -171,9 +172,9 @@ class BaseSource(WebDriverConfig, ABC):
         ids = self._collect_all_ids(total)
         workers = max_workers or self.compute_workers(len(ids))
 
-        papers: dict[str, ResearchPaper] = {}
-        failed: list[str] = []
-        incomplete: dict[str, ResearchPaper] = {}
+        papers: Dict[str, ResearchPaper] = {}
+        failed: List[str] = []
+        incomplete: Dict[str, ResearchPaper] = {}
         
         chunks = list(self._chunks(ids, max(1, int(chunk_size))))
         with ThreadPoolExecutor(max_workers=min(workers, len(chunks))) as ex:

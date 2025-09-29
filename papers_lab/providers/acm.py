@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Optional, Any
+
+from typing import Optional, Any, List, Dict
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -40,9 +41,9 @@ class ACMSources(BaseSource):
         """
         XPath to wait for search results to load.
         """
-        return SEARCH_READY_XPATH
+        return self.SEARCH_READY_XPATH
 
-    def _parse_search_header(self) -> dict[str, Any]:
+    def _parse_search_header(self) -> Dict[str, Any]:
         """
         Parse the search results header to extract number of results, keywords, and years.
         """
@@ -66,11 +67,11 @@ class ACMSources(BaseSource):
             ul = self.driver.find_elements(By.XPATH, self.RESULTS_LIST_2)
         return ul
 
-    def _collect_search_ids_one_page(self) -> list[str]:
+    def _collect_search_ids_one_page(self) -> List[str]:
         """
         Collect document IDs (DOI suffixes) from the current search results page.
         """
-        ids: list[str] = []
+        ids: List[str] = []
         for li in self._list_items_one_page():
             for ln in li.text.split("\n"):
                 if "https://doi.org/" in ln:
@@ -96,7 +97,7 @@ class ACMSources(BaseSource):
             raise ValueError(f"Expected 1 <h1>, found {len(elems)}")
         return elems[0].text
 
-    def _parse_authors(self) -> list[str]:
+    def _parse_authors(self) -> List[str]:
         """
         Parse the list of authors of the current paper.
         """
@@ -120,20 +121,20 @@ class ACMSources(BaseSource):
         """
         return doc_id
 
-    def _parse_keywords(self) -> list[str]:
+    def _parse_keywords(self) -> List[str]:
         """
         Parse the keywords (terms) of the current paper.
         """
         sec = self.driver.find_element(By.ID, self.TERMS_SECTION_ID)
         self.driver.execute_script("arguments[0].scrollIntoView(true);", sec)
         items = self.wait_all(self.TERMS_LIST)
-        kws: list[str] = []
+        kws: List[str] = []
 
         for li in items:
             kws.extend(t for t in li.text.split("\n") if t)
         
         kws = kws[1:] if kws else []
-        return list(dict.fromkeys(kws))
+        return list(Dict.fromkeys(kws))
 
     def _paper_url(self, doc_id: str) -> str:
         """

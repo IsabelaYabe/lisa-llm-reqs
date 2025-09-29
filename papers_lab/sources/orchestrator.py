@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 import os
 from pathlib import Path
 from urllib.parse import urlparse
-from typing import Any
+from typing import Any, Tuple, List, Dict
 import pickle
 
 from logger import logger
 from papers_lab.providers import IEEESources, ACMSources
 from papers_lab.io import Storage
 
-def split_urls_by_domain(urls: list[str]) -> tuple[list[str], list[str]]:
+def split_urls_by_domain(urls: List[str]) -> Tuple[List[str], List[str]]:
     """
     Split a list of URLs into two lists based on their domain: IEEE and ACM (ignoring others).
     """
@@ -33,14 +35,8 @@ class SourcesOrchestrator:
     def __init__(self, storage: Storage):
         self.storage = storage
     
-    def _fetch_one_source(
-        self,
-        source_name: str,
-        handler,
-        urls: list[str],
-        tag: str,
-        save_dir: str | os.PathLike,
-    ) -> dict[str, str]:
+    def _fetch_one_source(self,source_name: str,handler,urls: List[str],tag: str,save_dir: str | os.PathLike,
+    ) -> Dict[str, str]:
         """
         Run queries for one source (IEEE/ACM), save pickled results and return mapping {path: url}.
         """
@@ -51,12 +47,12 @@ class SourcesOrchestrator:
         # out_dir = Path(save_dir) / source_name.lower()
         # out_dir.mkdir(parents=True, exist_ok=True)
 
-        saved_files_by_path: dict[str, str] = {}
+        saved_files_by_path: Dict[str, str] = {}
         for i, url in enumerate(urls, start=1):
             try:
                 research = handler.get_all_researches(url)
                 if research:
-                    file_path = self.storage.save_research(
+                    file_path = self.storage.save(
                         research,
                         root=Path(save_dir) / source_name.lower(),
                         name=f"{source_name.lower()}_research_{tag}_{i}"
@@ -70,9 +66,8 @@ class SourcesOrchestrator:
                 logger.exception(f"Error processing {source_name.upper()} research {tag}_{i} from URL: {url}", exc_info=True)
         return saved_files_by_path
 
-    def fetch_all(
-        self, urls: list[str], research_tag: str, save_dir: str | os.PathLike
-    ) -> tuple[dict[str, str], dict[str, str]]:
+    def fetch_all(self, urls: List[str], research_tag: str, save_dir: str | os.PathLike
+    ) -> Tuple[Dict[str, str], Dict[str, str]]:
         """
         Orchestrate fetching for IEEE and ACM URLs. Returns tuple (ieee_results, acm_results).
         """

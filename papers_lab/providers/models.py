@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field 
-from typing import Optional
+from typing import Optional, List, Dict
 
 @dataclass
 class ResearchPaper:
@@ -9,8 +10,8 @@ class ResearchPaper:
     abstract: Optional[str]  
     DOI: Optional[str]
     source_url: str
-    authors: Optional[list[str]] = field(default_factory=list)
-    keywords: Optional[list[str]] = field(default_factory=list)
+    authors: Optional[List[str]] = field(default_factory=List)
+    keywords: Optional[List[str]] = field(default_factory=List)
     
 @dataclass
 class Research:
@@ -19,8 +20,8 @@ class Research:
     years: str 
     publisher: str 
     url: str
-    content_type: list[str] = field(default_factory=list) 
-    papers_urls: list[str] = field(default_factory=list) 
-    failed_urls: list[str] = field(default_factory=list)
-    papers: dict = field(default_factory=dict)
-    incomplete_papers: dict = field(default_factory=dict) 
+    content_type: List[str] = field(default_factory=List) 
+    papers_urls: List[str] = field(default_factory=List) 
+    failed_urls: List[str] = field(default_factory=List)
+    papers: Dict = field(default_factory=Dict)
+    incomplete_papers: Dict = field(default_factory=Dict) 

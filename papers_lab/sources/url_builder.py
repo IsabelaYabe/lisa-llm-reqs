@@ -1,16 +1,19 @@
+from __future__ import annotations
+
+from typing import List, Tuple, Dict, Optional
 from urllib.parse import urlparse, urlencode, quote, quote_plus
 
 def build_acm_search_url(
-    groups: list[tuple[str, list[str]]],
-    after: tuple[int, int] = (2022, 1),
-    before: tuple[int, int] = (2026, 1),
-    exclude_filters: list[tuple[str, list[str]]] | None = None,
+    groups: List[Tuple[str, List[str]]],
+    after: Tuple[int, int] = (2022, 1),
+    before: Tuple[int, int] = (2026, 1),
+    exclude_filters: List[Tuple[str, List[str]]] | None = None,
 ) -> str:
     """
     Build a search URL for the ACM Digital Library with given search groups and date range.
     """
     ACM_SEARCH_BASE = "https://dl.acm.org/action/doSearch"
-    params: dict[str, object] = {
+    params: Dict[str, object] = {
         "fillQuickSearch": "false",
         "target": "advanced",
         "expand": "dl",
@@ -35,9 +38,9 @@ def build_acm_search_url(
     return f"{ACM_SEARCH_BASE}?{urlencode(params, quote_via=quote_plus)}"
     
 def build_ieee_search_url(
-    groups: list[tuple[str, list[str]]],
-    year_range: tuple[int, int] = (2022, 2025),
-    exclude_filters: list[tuple[str, list[str]]] | None = None,  
+    groups: List[Tuple[str, List[str]]],
+    year_range: Tuple[int, int] = (2022, 2025),
+    exclude_filters: List[Tuple[str, List[str]]] | None = None,  
 ) -> str:
     """
     Build a search URL for the IEEE Xplore Digital Library with given search groups and year range.
@@ -66,10 +69,10 @@ def build_ieee_search_url(
     }
     return f"{IEEE_SEARCH_BASE}?{urlencode(params, quote_via=quote)}"
 
-def build_search_urls_for_sources(groups: list[tuple[str, list[str]]],
-    year_range: tuple[int, int],
-    exclude_filters: list[tuple[str, list[str]]] | None
-) -> tuple[str, str]:
+def build_search_urls_for_sources(groups: List[Tuple[str, List[str]]],
+    year_range: Tuple[int, int],
+    exclude_filters: List[Tuple[str, List[str]]] | None
+) -> Tuple[str, str]:
     """
     Build search URLs for both IEEE and ACM sources based on the provided groups, year range, and optional exclude filters.
     """
