@@ -4,7 +4,6 @@ import os
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import Any, Tuple, List, Dict
-import pickle
 
 from logger import logger
 from papers_lab.providers import IEEESources, ACMSources
