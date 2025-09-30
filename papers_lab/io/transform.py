@@ -5,17 +5,18 @@ from functools import singledispatch
 from typing import Any, Dict, List, Sequence, Mapping
 import re
 import pandas as pd
+import unicodedata
 
 from logger import logger
-from providers.models import Research
+from ..providers.models import Research
 
 _MONTHS = {"january":1,"february":2,"march":3,"april":4,"may":5,"june":6,
            "july":7,"august":8,"september":9,"october":10,"november":11,"december":12}
 _RE_YEAR  = re.compile(r"(\d{4})\s*$", re.IGNORECASE)
 _RE_MONTH = re.compile(r"([A-Za-z]+)\s+\d{4}\s*$", re.IGNORECASE)
-_DOI_RX   = re.compile(r"^10\.\S+", re.IGNORECASE)
+_DOI_RX   = re.compile(r"^10\.\S+$", re.IGNORECASE)
 
-def paper_to_dict(p: Any) -> Dict:
+def _paper_to_dict(p: Any) -> Dict:
     """
     Convert a ResearchPaper or similar object to a dictionary.
     """
@@ -27,7 +28,7 @@ def paper_to_dict(p: Any) -> Dict:
     return getattr(p, "__dict__", {"_value": p})
 
 @singledispatch
-def extract_papers(obj: Any) -> List[Dict]:
+def _extract_papers(obj: Any) -> List[Dict]:
     """
     Extracts the 'papers' attribute from various types of research objects.
     """
@@ -40,18 +41,18 @@ def extract_papers(obj: Any) -> List[Dict]:
 
     papers = d.get("papers") or {}
     if isinstance(papers, dict):
-        return [paper_to_dict(p) for p in papers.values()]
+        return [_paper_to_dict(p) for p in papers.values()]
     if isinstance(papers, list):
-        return [paper_to_dict(p) for p in papers]
+        return [_paper_to_dict(p) for p in papers]
     return []
 
-@extract_papers.register
+@_extract_papers.register
 def _(obj: Research) -> List[Dict]:
     """
     Extract papers from a Research object.
     """
     papers_map = obj.papers or {}
-    return [paper_to_dict(p) for p in papers_map.values()]
+    return [_paper_to_dict(p) for p in papers_map.values()]
 
 def _parse_year_month(text: str) -> tuple[int | None, int | None]:
     """
@@ -73,6 +74,29 @@ def _parse_year_month(text: str) -> tuple[int | None, int | None]:
         month = None
     return year, month
 
+def _normalize_keyword(word: str) -> str | None:
+    if word is None:
+        return None
+    s = str(word)
+    s = unicodedata.normalize("NFKD", s)
+    s = "".join(ch for ch in s if not unicodedata.combining(ch))
+    s = unicodedata.normalize("NFKC", s).lower().strip()
+    s = re.sub(r"\s+", " ", s)
+    return s or None
+
+def _to_list(x: Any) -> list[str]:
+    if x is None:
+        return []
+    if isinstance(x, (list, tuple, set)):
+        return [str(e) for e in x]
+    return [str(x)]
+
+def _norm_list(x: Any) -> list[str]:
+    items = _to_list(x)
+    norm = {_normalize_keyword(i) for i in items}
+    norm.discard(None)
+    return sorted(norm)
+
 class PapersTransform:
     """
     Normalize research objects to a wide DataFrame (unique by DOI).
@@ -81,7 +105,7 @@ class PapersTransform:
         self._doi_col  = doi_col
         self._date_col = date_col
         self._sep = sep
-
+        
     @property
     def doi_col(self) -> str:
         return self._doi_col
@@ -98,7 +122,7 @@ class PapersTransform:
         """
         p_rows: List[Dict] = []
         for r in researches:
-            p_rows.extend(extract_papers(r))
+            p_rows.extend(_extract_papers(r))
 
         rows: List[Dict] = []
         for p in p_rows:
@@ -176,15 +200,36 @@ class PapersTransform:
                 count_col_name = f"n_{col}"
                 dfc[count_col_name] = dfc[col].apply(lambda x: len(x) if isinstance(x, (list, tuple, set)) else 0)
         return dfc
+        
+    def _normalize_keywords(self,df: pd.DataFrame,*,keywords_col: str = "keywords",out_list_col: str = "keywords_norm") -> pd.DataFrame:
+        """ 
+        Normalize keywords in the specified column, creating a new column:
+        - out_list_col: list of normalized keywords
+        """
+        dfc = df.copy()
+        if keywords_col not in dfc.columns:
+            return dfc
+
+        dfc[out_list_col] = dfc[keywords_col].apply(_norm_list)
+        return dfc
     
-    def transform(self,researches:List[Any],*,drop_invalid_doi:bool=True,keep:Sequence[str]|None=None,rename:Dict[str,str]|None=None,schema:Mapping[str,str|type]|None=None,count_cols:Sequence[str]=("keywords","authors")) -> pd.DataFrame:
+    def transform(self,researches:List[Any],*,drop_invalid_doi:bool=True,keep:Sequence[str]|None=None,rename:Dict[str,str]|None=None,schema:Mapping[str,str|type]|None=None,count_cols:Sequence[str]=("keywords","authors"),normalize_keywords:bool=True,keywords_col:str="keywords",out_keywords_col="keywords_norm") -> pd.DataFrame:
         """
         Orchestrator method to transform research objects into a cleaned DataFrame.
         """
         df = self._to_wide_unique(researches)
         df = self._validate_doi(df, drop_invalid=drop_invalid_doi)
+        
+        if normalize_keywords:
+            df = self._normalize_keywords(df, keywords_col=keywords_col, out_list_col=out_keywords_col)
+        
         df = self._select_rename(df, keep=keep, rename=rename)
+        
         if schema:
             df = self._ensure_types(df, schema=schema)
-        df = self._add_counts(df, count_cols=count_cols)
+
+        cols_to_count = list(count_cols) if count_cols else []
+        if normalize_keywords and out_keywords_col not in cols_to_count and out_keywords_col in df.columns:
+            cols_to_count.append(out_keywords_col)
+        df = self._add_counts(df, count_cols=tuple(cols_to_count))
         return df

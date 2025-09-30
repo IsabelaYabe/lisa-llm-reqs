@@ -6,8 +6,8 @@ from urllib.parse import urlparse
 from typing import Any, Tuple, List, Dict
 
 from logger import logger
-from papers_lab.providers import IEEESources, ACMSources
-from papers_lab.io import Storage
+from ..providers import IEEESources, ACMSources
+from ..io import Storage
 
 def split_urls_by_domain(urls: List[str]) -> Tuple[List[str], List[str]]:
     """
