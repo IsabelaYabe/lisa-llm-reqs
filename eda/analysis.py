@@ -32,7 +32,7 @@ class Analysis:
             s = s.explode().dropna()
         return s.value_counts()
     
-    def cooccurrence_matrix(self, col="keywords_norm", top_n: int | None = 50, normalize: bool = False) -> pd.DataFrame:
+    def cooccurrence_matrix(self, col: str, top_n: int | None = 50, normalize: bool = False) -> pd.DataFrame:
         """
         Compute co-occurrence matrix for items in a list column.
         Only the top_n most frequent items are considered if top_n is specified. 

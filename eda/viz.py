@@ -171,7 +171,7 @@ class Visualizer:
             for bar, val in zip(bars, values):
                 ax.text(bar.get_x() + bar.get_width()/2,
                         bar.get_height() + dy,
-                        format_str.format(val),   # <-- usar format_str
+                        format_str.format(val),
                         va="bottom", ha="center", fontsize=10, color="black")
 
         if are_all_int:
@@ -186,17 +186,45 @@ class Visualizer:
         data: Sequence[float | int], 
         *, 
         bins: int = 20, 
+        bin_method: str = "auto", 
         title: str = "Histogram", 
         xlabel: str = "Value", 
+        ylabel: str = "Frequency",
         density: bool = False,
+        annotate: bool = True,
         cmap_name: Optional[str] = None):
         """
         Plot a histogram of the data.
         """
+        arr = np.asarray(list(data), dtype=float)
+        arr = arr[np.isfinite(arr)]
+        if arr.size == 0:
+            return
+        
+        if bins is None:
+            edges = np.histogram_bin_edges(arr, bins=bin_method)
+        else:
+            edges = bins
+
         colors = self._colors(1, cmap_name)[0]
-        plt.figure(figsize=self.figsize)
-        plt.hist(data, bins=bins, color=colors, edgecolor="black", density=density)
-        self._apply_common(xlabel=xlabel, title=title)
+        fig, ax = plt.subplots(figsize=self.figsize)
+
+        n, be, patches = ax.hist(arr, bins=edges, color=colors, edgecolor="black", density=density)
+        fmt = "{:.2f}" if density else "{:.0f}"
+
+        if annotate:
+            ymax = np.max(n) if n.size else 0
+            dy = (ymax * 0.01) + (0.02 if ymax == 0 else 0.0)
+            for rect, val in zip(patches, n):
+                x = rect.get_x() + rect.get_width() / 2
+                y = rect.get_height()
+                ax.text(x, y + dy, fmt.format(val), ha="center", va="bottom", fontsize=10, color="black")
+        
+        if not density:
+            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+            ax.yaxis.set_major_formatter(StrMethodFormatter('{x:.0f}'))
+
+        self._apply_common(xlabel=xlabel, ylabel=ylabel, title=title)
         plt.show()
 
     def boxplot(self,
@@ -260,39 +288,6 @@ class Visualizer:
         self._apply_common(xlabel=xlabel, ylabel=ylabel, title=title)
         plt.show()
 
-    def heatmap_from_df(self,
-        df: pd.DataFrame,
-        col_x: str,
-        col_y: str,
-        *,
-        aggfunc: str | callable = "size",
-        normalize: bool = False,
-        title: Optional[str]  = None,
-        xlabel: Optional[str]  = None,
-        ylabel: Optional[str]  = None,
-        annotate: bool = True, 
-        fmt: str = ".0f",
-        cmap_name: Optional[str] = None
-        ):
-        """
-        Creates a heatmap from two columns of a DataFrame.
-        """
-        pivot = pd.pivot_table(df[col_y], df[col_x], aggfunc=aggfunc)
-        if normalize:
-            pivot = pivot.div(pivot.sum().sum())
-
-        return self.heatmap(
-            pivot,
-            xlabels=pivot.columns,
-            ylabels=pivot.index,
-            title=title or f"Heatmap: {col_y} × {col_x}",
-            xlabel=xlabel or col_x,
-            ylabel=ylabel or col_y,
-            annotate=annotate,
-            fmt=fmt,
-            cmap_name=cmap_name
-        )
-
     def line(self,
             x: Sequence,
             y: Sequence[int | float | str],
@@ -353,3 +348,27 @@ class Visualizer:
         self._apply_common(xlabel=xlabel, ylabel=ylabel, title=title)
         plt.tight_layout()
         plt.show()
+
+    def stats_table(
+        self,
+        data: Sequence[float | int],
+        *,
+        percentiles: Sequence[float] = (0.25, 0.5, 0.75),
+        floatfmt: str = "{:.3f}",
+        title: str = "Statistical Summary",
+    ) -> pd.DataFrame:
+        """
+        Displays a table with basic statistics for:
+        - a single sequence (list, Series, ndarray)
+        - or a dict of sequences (multi-colunas).
+        Returns the DataFrame with stats.
+        """
+        if isinstance(data, dict):
+            dfc = pd.DataFrame(data)
+        elif isinstance(data, pd.Series):
+            dfc = data.to_frame(name=data.name or "values")
+        else:
+            dfc = pd.DataFrame({"values": list(data)})
+
+        desc = dfc.describe(percentiles=percentiles).T  
+        return desc 

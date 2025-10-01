@@ -34,20 +34,24 @@ class Embedder:
 
     @property
     def model(self) -> SentenceTransformer:
+        """
+        Get the underlying SentenceTransformer model, loading it if necessary.
+        """
         if self._model is None:
             self._model = SentenceTransformer(self.model_name, device=self.device, cache_folder=self.cache_folder)
             if self.max_seq_length is not None:
                 self._model.max_seq_length = int(self.max_seq_length)
             if self.precision == "float16" and self.device == "cuda":
                 self._model = self._model.half()  
+
     def encode(self, texts: Sequence[str]) -> np.ndarray:
-        # normaliza entradas
+        """
+        Generate embeddings for a list of texts.
+        """
         txts: List[str] = [t if isinstance(t, str) and t.strip() else "" for t in texts]
 
-        # garante que o modelo está carregado
         self._ensure_model()
 
-        # gera embeddings
         emb = self._model.encode(
             txts,
             batch_size=self.batch_size,

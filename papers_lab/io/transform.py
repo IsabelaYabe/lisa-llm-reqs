@@ -97,6 +97,11 @@ def _norm_list(x: Any) -> list[str]:
     norm.discard(None)
     return sorted(norm)
 
+def _count_words(txt):
+    if not isinstance(txt, str):
+        return 0
+    return len(str(txt).split())
+
 class PapersTransform:
     """
     Normalize research objects to a wide DataFrame (unique by DOI).
@@ -189,8 +194,20 @@ class PapersTransform:
                 except Exception as e:
                     logger.warning(f"Failed to convert column '{col}' to type '{typ}': {e}")
         return dfc
-    
-    def _add_counts(self,df:pd.DataFrame,*,count_cols:Sequence[str]=("keywords","authors")) -> pd.DataFrame:
+
+    def _add_word_counts(self, df, cols: Sequence[str] = ["abstract"]) -> pd.DataFrame:
+        """
+        Count the number of words in the specified text column.
+        Returns a Series aligned with the DataFrame index.
+        """
+        dfc = df.copy()
+        for col in cols:
+            if col in dfc.columns:
+                dfc[f"n_{col}_words"] = dfc[col].apply(_count_words)
+        
+        return dfc
+
+    def _add_counts(self,df:pd.DataFrame,*,count_cols:Sequence[str]=("keywords","authors","abstract")) -> pd.DataFrame:
         """
         Add count columns (e.g., n_keywords, n_authors) if the specified columns exist.
         """
@@ -212,8 +229,20 @@ class PapersTransform:
 
         dfc[out_list_col] = dfc[keywords_col].apply(_norm_list)
         return dfc
-    
-    def transform(self,researches:List[Any],*,drop_invalid_doi:bool=True,keep:Sequence[str]|None=None,rename:Dict[str,str]|None=None,schema:Mapping[str,str|type]|None=None,count_cols:Sequence[str]=("keywords","authors"),normalize_keywords:bool=True,keywords_col:str="keywords",out_keywords_col="keywords_norm") -> pd.DataFrame:
+
+    def transform(self,
+        researches:List[Any],
+        *,
+        drop_invalid_doi:bool=True,
+        keep:Sequence[str]|None=None,
+        rename:Dict[str,str]|None=None,
+        schema:Mapping[str,str|type]|None=None,
+        count_cols:Sequence[str]=("keywords","authors"),
+        normalize_keywords:bool=True,
+        keywords_col:str="keywords",
+        out_keywords_col:str="keywords_norm",
+        count_word_cols:Sequence[str]=["abstract"]
+        ) -> pd.DataFrame:
         """
         Orchestrator method to transform research objects into a cleaned DataFrame.
         """
@@ -232,4 +261,7 @@ class PapersTransform:
         if normalize_keywords and out_keywords_col not in cols_to_count and out_keywords_col in df.columns:
             cols_to_count.append(out_keywords_col)
         df = self._add_counts(df, count_cols=tuple(cols_to_count))
+        
+        if count_word_cols:
+            df = self._add_word_counts(df, cols=count_word_cols)
         return df
