@@ -10,11 +10,7 @@ import unicodedata
 from logger import logger
 from ..providers.models import Research
 
-_MONTHS = {"january":1,"february":2,"march":3,"april":4,"may":5,"june":6,
-           "july":7,"august":8,"september":9,"october":10,"november":11,"december":12}
-_RE_YEAR  = re.compile(r"(\d{4})\s*$", re.IGNORECASE)
-_RE_MONTH = re.compile(r"([A-Za-z]+)\s+\d{4}\s*$", re.IGNORECASE)
-_DOI_RX   = re.compile(r"^10\.\S+$", re.IGNORECASE)
+from ..config import MONTH_MAPPING, YEAR_PATTERN, MONTH_PATTERN, DOI_PATTERN 
 
 def _paper_to_dict(p: Any) -> Dict:
     """
@@ -62,14 +58,14 @@ def _parse_year_month(text: str) -> tuple[int | None, int | None]:
         return None, None
     s = str(text).strip().lower()
     
-    m_year = _RE_YEAR.search(s)
+    m_year = YEAR_PATTERN.search(s)
     if m_year:
         year = int(m_year.group(1))
     else:
         year = None
-    m_month = _RE_MONTH.search(s)
+    m_month = MONTH_PATTERN.search(s)
     if m_month:
-        month = _MONTHS.get(m_month.group(1).lower())
+        month = MONTH_MAPPING.get(m_month.group(1).lower())
     else:
         month = None
     return year, month
@@ -102,7 +98,7 @@ def _count_words(txt):
         return 0
     return len(str(txt).split())
 
-class PapersTransform:
+class PaperTransform:
     """
     Normalize research objects to a wide DataFrame (unique by DOI).
     """
@@ -164,7 +160,7 @@ class PapersTransform:
         dfc=df.copy()
         
         doi_column = dfc[self._doi_col].astype("string")
-        is_valid_doi = doi_column.str.fullmatch(_DOI_RX.pattern, na=False, case=False)
+        is_valid_doi = doi_column.str.fullmatch(DOI_PATTERN.pattern, na=False, case=False)
 
         if drop_invalid:
             return dfc[is_valid_doi].reset_index(drop=True)

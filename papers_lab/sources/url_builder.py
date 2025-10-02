@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import List, Tuple, Dict, Optional
 from urllib.parse import urlparse, urlencode, quote, quote_plus
 
+from ..config import ACM_SEARCH_BASE, IEEE_SEARCH_BASE
+
 def build_acm_search_url(
     groups: List[Tuple[str, List[str]]],
     after: Tuple[int, int] = (2022, 1),
@@ -12,7 +14,6 @@ def build_acm_search_url(
     """
     Build a search URL for the ACM Digital Library with given search groups and date range.
     """
-    ACM_SEARCH_BASE = "https://dl.acm.org/action/doSearch"
     params: Dict[str, object] = {
         "fillQuickSearch": "false",
         "target": "advanced",
@@ -45,7 +46,6 @@ def build_ieee_search_url(
     """
     Build a search URL for the IEEE Xplore Digital Library with given search groups and year range.
     """
-    IEEE_SEARCH_BASE = "https://ieeexplore.ieee.org/search/searchresult.jsp"
 
     include_parts = [
         "(" + " OR ".join(f'"{field}":"{t}"' for t in terms) + ")"

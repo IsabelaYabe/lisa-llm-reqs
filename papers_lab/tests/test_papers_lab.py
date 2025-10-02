@@ -59,12 +59,12 @@ abstract_nlp = (
 )
 
 groups_sets = {
-#   "reverse_oo_uml": [abstract_reverse_engineering, abstract_oo, abstract_use_case_uml],
-#   "reverse_static_uml": [abstract_reverse_engineering, abstract_static_analysis, abstract_use_case_uml],
-    "concept_code_static_uml": [abstract_concept_location, abstract_code, abstract_static_analysis, abstract_use_case_uml],
-#   "reverse_concept_uml": [abstract_reverse_engineering, abstract_concept_location, abstract_use_case_uml],
-#   "reverse_concept_nlp": [abstract_reverse_engineering, abstract_concept_location, abstract_nlp],
-   "reverse_static_nlp": [abstract_reverse_engineering, abstract_static_analysis, abstract_nlp],
+    # "reverse_oo_uml": [abstract_reverse_engineering, abstract_oo, abstract_use_case_uml],
+    # "reverse_static_uml": [abstract_reverse_engineering, abstract_static_analysis, abstract_use_case_uml],
+    # "concept_code_static_uml": [abstract_concept_location, abstract_code, abstract_static_analysis, abstract_use_case_uml],
+    # "reverse_concept_uml": [abstract_reverse_engineering, abstract_concept_location, abstract_use_case_uml],
+    # "reverse_concept_nlp": [abstract_reverse_engineering, abstract_concept_location, abstract_nlp],
+    "reverse_static_nlp": [abstract_reverse_engineering, abstract_static_analysis, abstract_nlp],
 }
 
 def main():

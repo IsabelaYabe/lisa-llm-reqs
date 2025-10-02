@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 
 from papers_lab.io import Storage
-from papers_lab.io import PapersTransform
+from papers_lab.io import PaperTransform
 
 
 def _collect_research_objects(base_dir: Path) -> list:
@@ -51,7 +51,7 @@ def df_transformed(researches):
     """
     Executes the actual transform on the persisted objects.
     """
-    tx = PapersTransform(doi_col="DOI", date_col="date", sep=".")
+    tx = PaperTransform(doi_col="DOI", date_col="date", sep=".")
     df = tx.transform(
         researches,
         drop_invalid_doi=True,

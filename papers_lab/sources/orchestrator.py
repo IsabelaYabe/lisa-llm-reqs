@@ -39,13 +39,6 @@ class SourcesOrchestrator:
         """
         Run queries for one source (IEEE/ACM), save pickled results and return mapping {path: url}.
         """
-        # urls = [u for u in urls if u]
-        # if not urls:
-        #     return {}
-
-        # out_dir = Path(save_dir) / source_name.lower()
-        # out_dir.mkdir(parents=True, exist_ok=True)
-
         saved_files_by_path: Dict[str, str] = {}
         for i, url in enumerate(urls, start=1):
             try:
@@ -57,8 +50,6 @@ class SourcesOrchestrator:
                         name=f"{source_name.lower()}_research_{tag}_{i}"
                     )
                     saved_files_by_path[str(file_path)] = url
-                    
-                    # logger.debug(f"Saved {source_name.upper()} research {tag}_{i}:\n len_papers={len(research.papers)}\n num_results={research.num_results}\n incomplete_papers={len(research.incomplete_papers)}")
                 else:
                     logger.warning(f"No results for URL ({source_name.upper()}): {url}")
             except Exception:

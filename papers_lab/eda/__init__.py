@@ -1,5 +1,0 @@
-__version__ = "0.1.0"
-
-from .paper_analysis import PaperAnalysis
-
-__all__ = ["__version__", "PaperAnalysis"]

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 from typing import Optional
-from .analysis import Analysis
+from eda.analysis import Analysis
 
 class PaperAnalysis(Analysis):
     """
