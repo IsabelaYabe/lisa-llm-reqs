@@ -12,8 +12,6 @@ class Embedder:
         device: Optional[str] = None,           # "cuda" | "cpu"
         normalize_embeddings: bool = False,
         show_progress_bar: bool = False,
-        convert_to_numpy: bool = True,
-        convert_to_tensor: bool = False,
         max_seq_length: Optional[int] = None,
         cache_folder: Optional[str] = None,
         precision: Literal["float32", "float16"] = "float32",
@@ -23,8 +21,6 @@ class Embedder:
         self.device = device
         self.normalize_embeddings = normalize_embeddings
         self.show_progress_bar = show_progress_bar
-        self.convert_to_numpy = convert_to_numpy
-        self.convert_to_tensor = convert_to_tensor
         self.max_seq_length = max_seq_length
         self.cache_folder = cache_folder
         self.precision = precision
@@ -50,19 +46,26 @@ class Embedder:
 
     def encode(self, texts: Sequence[str]) -> np.ndarray:
         txts: List[str] = [t if isinstance(t, str) and t.strip() else "" for t in texts]
-
-        _ = self.model
+    
+        _ = self.model  # garante que carregou
 
         emb = self.model.encode(
             txts,
             batch_size=self.batch_size,
             show_progress_bar=self.show_progress_bar,
-            convert_to_numpy=self.convert_to_numpy,
-            convert_to_tensor=self.convert_to_tensor,
             normalize_embeddings=self.normalize_embeddings,
         )
-        
-        if not isinstance(emb, np.ndarray):
-            return np.asarray(emb) 
-        else:
-            emb
+
+        # Normaliza saída: (N, D) np.ndarray
+        if isinstance(emb, np.ndarray):
+            return emb
+        try:
+            import torch
+            if isinstance(emb, torch.Tensor):
+                return emb.detach().cpu().numpy()
+        except Exception:
+            pass
+        # às vezes pode vir list de vetores; empilha
+        if isinstance(emb, list):
+            return np.vstack(emb).astype(np.float32, copy=False)
+        return np.asarray(emb)
