@@ -1,5 +1,5 @@
-from .analysis import Analysis
-from .paper_analysis import PaperAnalysis
-from .viz import Visualizer
+__version__ = "0.1.0"
 
-__all__ = ["PapersAnalysis", "PaperAnalysis", "Visualizer"]
+from .paper_analysis import PaperAnalysis
+
+__all__ = ["__version__", "PaperAnalysis"]
