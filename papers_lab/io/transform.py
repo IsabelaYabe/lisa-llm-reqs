@@ -158,7 +158,6 @@ class PaperTransform:
         Validate DOI column in the DataFrame. 
         """
         dfc=df.copy()
-        
         doi_column = dfc[self._doi_col].astype("string")
         is_valid_doi = doi_column.str.fullmatch(DOI_PATTERN.pattern, na=False, case=False)
 

@@ -31,7 +31,8 @@ class Storage:
         if not path.exists():
             raise FileNotFoundError(f"File not found: {path}")
         with open(path, "rb") as f:
-            return pickle.load(f)
+            pkl = pickle.load(f)
+            return pkl
 
     def iter_dir(self,root: str | Path,*,pattern: str = "*.pkl",recursive: bool = True) -> Iterator[Any]:
         """

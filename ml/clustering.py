@@ -34,13 +34,21 @@ class Clusterer:
     kmeans_init: str = "k-means++"
     kmeans_n_init: int | str = "auto"
     random_state: int = 42
+
     min_cluster_size: int = 10
     min_samples: Optional[int] = None
     cluster_selection_epsilon: float = 0.0
+    cluster_metric: Literal[
+        "euclidean","manhattan","chebyshev","minkowski",
+        "cosine","seuclidean","mahalanobis","haversine","l1","l2","infinity"
+    ] = "euclidean"
+    
     reducer: Literal["umap", "pca", "none"] = "umap"
     n_components: int = 2
     umap_neighbors: int = 15
     umap_min_dist: float = 0.1
+    reducer_metric: Literal["euclidean","cosine","manhattan","chebyshev","minkowski"] = "cosine"
+
     _kmeans: Optional[KMeans] = None
     _hdb: Optional["hdbscan.HDBSCAN"] = None
 
@@ -55,7 +63,7 @@ class Clusterer:
                 n_neighbors=self.umap_neighbors,
                 min_dist=self.umap_min_dist,
                 random_state=self.random_state,
-                metric="cosine",
+                metric=self.reducer_metric
             )
             return reducer.fit_transform(X)
         
@@ -84,7 +92,7 @@ class Clusterer:
             min_cluster_size=self.min_cluster_size,
             min_samples=self.min_samples,
             cluster_selection_epsilon=self.cluster_selection_epsilon,
-            metric="euclidean",
+            metric=self.cluster_metric,
         )
         self._hdb.fit(X)
         return self
@@ -131,7 +139,10 @@ class Clusterer:
         Xv = X[labels != -1]
         if len(np.unique(labs)) < 2:
             return None
-        return float(silhouette_score(Xv, labs, metric="cosine"))
+        metric = "euclidean"
+        if self.method == "hdbscan":
+            metric = self.cluster_metric
+        return float(silhouette_score(X[mask], labs, metric=metric))
 
     def centroids(self, X: np.ndarray, labels: np.ndarray) -> Dict[int, np.ndarray]:
         """
