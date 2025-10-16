@@ -9,7 +9,7 @@ def build_acm_search_url(
     groups: List[Tuple[str, List[str]]],
     after: Tuple[int, int] = (2022, 1),
     before: Tuple[int, int] = (2026, 1),
-    exclude_filters: List[Tuple[str, List[str]]] | None = None,
+    exclude_filters: Optional(List[Tuple[str, List[str]]]) = None
 ) -> str:
     """
     Build a search URL for the ACM Digital Library with given search groups and date range.
@@ -41,7 +41,7 @@ def build_acm_search_url(
 def build_ieee_search_url(
     groups: List[Tuple[str, List[str]]],
     year_range: Tuple[int, int] = (2022, 2025),
-    exclude_filters: List[Tuple[str, List[str]]] | None = None,  
+    exclude_filters: Optional(List[Tuple[str, List[str]]]) = None 
 ) -> str:
     """
     Build a search URL for the IEEE Xplore Digital Library with given search groups and year range.
@@ -71,7 +71,7 @@ def build_ieee_search_url(
 
 def build_search_urls_for_sources(groups: List[Tuple[str, List[str]]],
     year_range: Tuple[int, int],
-    exclude_filters: List[Tuple[str, List[str]]] | None
+    exclude_filters: Optional(List[Tuple[str, List[str]]]) = None
 ) -> Tuple[str, str]:
     """
     Build search URLs for both IEEE and ACM sources based on the provided groups, year range, and optional exclude filters.

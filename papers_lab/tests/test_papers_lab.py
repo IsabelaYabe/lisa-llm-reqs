@@ -5,63 +5,39 @@ from papers_lab.sources.url_builder import build_search_urls_for_sources
 from papers_lab.sources.orchestrator import SourcesOrchestrator
 from papers_lab.io import Storage
 
-year_range = (2020, 2025)
+year_range = (2015, 2026)
 
-exclude_noise = [
-    ("Abstract", [
-        "VLSI","circuit","PCB","hardware reverse engineering",
-        "malware","virus","exploit","firmware","embedded systems","binary",
-        "bytecode","opcode","binary instrumentation"
-    ])
-]
+# exclude_noise = [
+    # ("Abstract", [
+        # "circuit","hardware reverse engineering",
+        # "malware","virus","exploit","firmware","embedded systems","binary", "bytecode"
+    # ])
+# ]
 
-abstract_reverse_engineering = (
-    "Abstract", [
-        "reverse engineering","re-engineer","reengineer",
-        "model recovery","design recovery","architecture recovery",
-        "requirements recovery","software visualization","program comprehension"
-    ]
-)
-abstract_oo = ("Abstract", ["object-oriented","object oriented","OO","OOP","object-oriented software","class-based","inheritance","polymorphism"])
-abstract_code = ("Abstract", ["legacy system","code base","source code"])
-abstract_use_case_uml = (
-    "Abstract", [
-        "UML","UML reverse engineering","UML generation",
-        "class diagram","sequence diagram","object diagram","state machine",
-        "package diagram","component diagram","activity diagram",
-        "interaction diagram","collaboration diagram",
-        "use case","use-case","use case diagram","scenario"
-    ]
-)
-abstract_static_analysis = (
-    "Abstract", [
-        "static analysis","source code analysis","program comprehension",
-        "AST","call graph","dependency analysis","points-to analysis",
-        "code inspection","software metrics","control flow analysis"
-    ]
-)
-abstract_concept_location = (
-    "Abstract", [
-        "concept location","feature location","concern location",
-        "information retrieval","IR","traceability",
-        "requirements traceability","requirements extraction",
-        "latent semantic indexing","LSI","topic modeling"
-    ]
-)
-abstract_nlp = (
-    "Abstract", [
-        "natural language processing","NLP","information retrieval","concept location","LSI","latent semantic indexing"
-    ]
-)
+abstract_reverse_engineering = ("Abstract", ["reverse engineering" , "design recovery"])
+
+abstract_requirements = ("Abstract", ["use case", "UML", "requirements"])
+
+abstract_nlp = ("Abstract", ["LLM", "static analysis", "natural language processing", "NLP"])
+
+abstract_others = ("Abstract", ["object-oriented", "software modeling"])
 
 groups_sets = {
-    "reverse_oo_uml": [abstract_reverse_engineering, abstract_oo, abstract_use_case_uml],
-    "reverse_static_uml": [abstract_reverse_engineering, abstract_static_analysis, abstract_use_case_uml],
-    "concept_code_static_uml": [abstract_concept_location, abstract_code, abstract_static_analysis, abstract_use_case_uml],
-    "reverse_concept_uml": [abstract_reverse_engineering, abstract_concept_location, abstract_use_case_uml],
-    "reverse_concept_nlp": [abstract_reverse_engineering, abstract_concept_location, abstract_nlp],
-    "reverse_static_nlp": [abstract_reverse_engineering, abstract_static_analysis, abstract_nlp],
+    # "search_1": [abstract_reverse_engineering, abstract_requirements, abstract_others],
+    "search_2": [abstract_reverse_engineering, abstract_requirements, abstract_nlp]
 }
+
+# (Abstract:("reverse engineering" OR "design recovery"))
+# AND (Abstract:("object-oriented" OR "UML" OR "software modeling"))
+# AND (Abstract:("use case" OR "requirements"))
+# https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&matchBoolean=true&newsearch=true&queryText=((Abstract:(%22reverse%20engineering%22%20OR%20%22design%20recovery%22))%0AAND%20(Abstract:(%22object-oriented%22%20OR%20%22UML%22%20OR%20%22software%20modeling%22))%0AAND%20(Abstract:(%22use%20case%22%20OR%20%22requirements%22))%0A)
+
+
+# (Abstract:("reverse engineering" OR "design recovery"))
+# AND (Abstract:("object-oriented" OR "UML" OR "software modeling"))
+# AND (Abstract:("LLM" OR "static analysis" OR "natural language processing" OR "NLP"))
+
+# https://ieeexplore.ieee.org/search/searchresult.jsp?action=search&matchBoolean=true&queryText=((Abstract:(%22reverse%20engineering%22%20OR%20%22design%20recovery%22))%0AAND%20(Abstract:(%22object-oriented%22%20OR%20%22UML%22%20OR%20%22software%20modeling%22))%0AAND%20(Abstract:(%22LLM%22%20OR%20%22static%20analysis%22%20OR%20%22natural%20language%20processing%22%20OR%20%22NLP%22))%0A)&highlight=true&returnFacets=ALL&returnType=SEARCH&matchPubs=true&ranges=2023_2025_Year
 
 def main():
     start_time = time.time()
@@ -69,7 +45,8 @@ def main():
     orch = SourcesOrchestrator(storage) 
 
     for name, groups in groups_sets.items():
-        ieee_url, acm_url = build_search_urls_for_sources(groups, year_range, exclude_noise)
+        # ieee_url, acm_url = build_search_urls_for_sources(groups, year_range, exclude_noise)
+        ieee_url, acm_url = build_search_urls_for_sources(groups, year_range)
         logger.debug(f"[{name}] IEEE URL: {ieee_url}")
         logger.debug(f"[{name}] ACM URL: {acm_url}")
         # urls = [ieee_url, acm_url]
@@ -77,8 +54,8 @@ def main():
         urls = [acm_url]
 
         logger.debug(f"[{name}] Starting search…")
-        saved_ieee, saved_acm = orch.fetch_all(urls, research_tag=name, save_dir="papers")
-        # saved_ieee, saved_acm = orch.fetch_all(urls, research_tag=name, save_dir="papers_test")
+        # saved_ieee, saved_acm = orch.fetch_all(urls, research_tag=name, save_dir="search_data")
+        saved_ieee, saved_acm = orch.fetch_all(urls, research_tag=name, save_dir="ieee_data_test")
 
         logger.debug(f"[{name}] IEEE saved: {len(saved_ieee)} | ACM saved: {len(saved_acm)}")
 
